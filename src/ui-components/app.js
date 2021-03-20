@@ -15,7 +15,13 @@ class App extends Component {
       showBackgrounds: false,
       settings: props.worldState.settings,
       showSettings: false,
+      modalTitle: "",
     };
+  }
+
+  selectBackground(background) {
+    this.props.worldState.background = { src: background };
+    this.setState({ show: false });
   }
 
   componentDidMount() {
@@ -39,15 +45,18 @@ class App extends Component {
             show: true,
             showBackgrounds: false,
             showSettings: true,
+            modalTitle: "Settings",
           })}"
         openBackgrounds="${() =>
           this.setState({
             show: true,
             showBackgrounds: true,
             showSettings: false,
+            modalTitle: "Backgrounds",
           })}"
       ><//>
       <${Modal}
+        title=${state.modalTitle}
         show=${state.show}
         close=${() => this.setState({ show: false })}
       >
@@ -59,8 +68,7 @@ class App extends Component {
           : html``}
         ${state.showBackgrounds
           ? html`<${BackgroundsForm}
-              select="${(background) =>
-                (props.worldState.background = { src: background })}"
+              select="${this.selectBackground.bind(this)}"
               backgrounds="${props.assets.backgrounds}"
             ><//>`
           : html``}

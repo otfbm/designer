@@ -38,12 +38,13 @@ export default class Token extends Component {
 
     return html`<li>
       <div
+        class="mb-1"
         draggable="true"
         onDragend="${() => copy({ src, x, y })}"
         onDrag="${this.drag.bind(this)}"
         onDblclick="${this.doubleClick.bind(this)}"
       >
-        <img src="${src}" />
+        <img class="object-scale-down object-center" src="${src}" />
       </div>
     </li>`;
   }
