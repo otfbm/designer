@@ -12,7 +12,7 @@ class SideBar extends Component {
   render({ tokens, dropToken, openSettings, openBackgrounds }) {
     return html`<div
       id="sidebar"
-      class="absolute inset-y-0 right-0 w-16 bg-black bg-opacity-50 shadow p-1"
+      class="absolute inset-y-0 right-0 w-16 bg-white bg-opacity-50 shadow p-1"
     >
       <button id="settings-button" onClick="${() => openSettings()}">
         <img src="/public/settings.png" />
