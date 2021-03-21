@@ -26,6 +26,12 @@ export default class TokenCollection {
     }
   }
 
+  update(settings) {
+    for (const token of this.tokens) {
+      token.update(settings);
+    }
+  }
+
   removeAll() {
     this.layer.removeChildren();
   }

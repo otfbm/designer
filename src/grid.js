@@ -7,35 +7,31 @@ export default class Grid {
   }
 
   draw(settings) {
-    console.log(settings);
     const { cellsize, gridTransparency, gridColor } = settings;
     const thickness = 1;
-    let x = cellsize;
     this.layer.removeChildren();
-    while (x < settings.widthPx) {
+    for (let x = 1; x < settings.width; x++) {
       this.layer.addChild(
         line(
-          { x, y: 0 },
-          { x, y: settings.widthPx },
+          { x: x * cellsize, y: 0 },
+          { x: x * cellsize, y: 0.5 + settings.heightPx },
           thickness,
           gridTransparency,
           parseInt(gridColor, 16)
         )
       );
-      x += cellsize;
     }
     let y = cellsize;
-    while (y < settings.heightPx) {
+    for (let y = 1; y < settings.height; y++) {
       this.layer.addChild(
         line(
-          { x: 0, y },
-          { x: settings.heightPx, y },
+          { x: 0, y: y * cellsize },
+          { x: 0.5 + settings.widthPx, y: y * cellsize },
           thickness,
           gridTransparency,
           parseInt(gridColor, 16)
         )
       );
-      y += cellsize;
     }
   }
 }

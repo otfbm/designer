@@ -3,6 +3,7 @@ import { Sprite, Container, filters } from "pixi.js";
 const _settings = Symbol("settings");
 const _colorFilter = Symbol("colorFilter");
 const _layer = Symbol("layer");
+const _sprite = Symbol("sprite");
 
 export default class Token {
   constructor(settings, assets, { x, y, src }) {
@@ -29,6 +30,7 @@ export default class Token {
     sprite.height = settings.cellsize;
     sprite.anchor.x = 0.5;
     sprite.anchor.y = 0.5;
+    this[_sprite] = sprite;
 
     this[_layer].x = settings.cellsize / 2 + xy(x);
     this[_layer].y = settings.cellsize / 2 + xy(y);
@@ -36,6 +38,11 @@ export default class Token {
     this.setupDragAndDrop();
 
     this[_layer].addChild(sprite);
+  }
+
+  update(settings) {
+    this[_sprite].width = settings.cellsize;
+    this[_sprite].height = settings.cellsize;
   }
 
   setupDragAndDrop() {

@@ -20,8 +20,8 @@ export default class TableTop {
     this.viewport = new Viewport({
       screenWidth: window.innerWidth,
       screenHeight: window.innerHeight,
-      // worldWidth: 1000,
-      // worldHeight: 1000,
+      worldWidth: 1000,
+      worldHeight: 1000,
 
       interaction: this.app.renderer.plugins.interaction, // the interaction module is important for wheel to work properly when renderer.view is placed or scaled
     });
@@ -99,6 +99,7 @@ export default class TableTop {
 
   setGridlines(settings) {
     this.layers.grid.draw(settings);
+    this.layers.tokens.update(settings);
   }
 
   setResolution(resolution) {
@@ -113,6 +114,13 @@ export default class TableTop {
     this.layers.background.set(image);
   }
 
+  setScale(settings) {
+    this.viewport.worldWidth = settings.widthPx;
+    this.viewport.worldHeight = settings.heightPx;
+    this.viewport.moveCenter(settings.widthPx / 2, settings.heightPx / 2);
+    this.viewport.fitWidth(settings.widthPx, true);
+  }
+
   async run() {
     await this.assetLoader.load();
 
@@ -124,6 +132,7 @@ export default class TableTop {
       this.setBackgroundColor(settings.backgroundColor);
       this.setResolution(settings.resolution);
       this.setGridlines(settings);
+      this.setScale(settings);
     });
 
     this.state.on("state:tokens:add", (token) => {
