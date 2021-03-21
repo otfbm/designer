@@ -4,13 +4,13 @@ import Token from "./token.js";
 export default class TokenCollection {
   constructor(state) {
     this.state = state;
-    this.tokens = [];
+    this.tokens = new Map();
     this.layer = new Container();
   }
 
   add(token) {
     if (token instanceof Token) {
-      this.tokens.push(token);
+      this.tokens.set(token.id, token);
       token.layer.click = () => {
         this.tokens.forEach((t) => {
           t.unselect();
@@ -27,9 +27,16 @@ export default class TokenCollection {
   }
 
   update(settings) {
-    for (const token of this.tokens) {
+    for (const token of Array.from(this.tokens.values())) {
       token.update(settings);
     }
+  }
+
+  remove(token) {
+    const t = this.tokens.get(token.id);
+    // t.
+    this.layer.removeChild(t.layer);
+    this.tokens.delete(token.id);
   }
 
   removeAll() {

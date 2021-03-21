@@ -1,6 +1,6 @@
 import { Application as App } from "pixi.js";
 import { Viewport } from "pixi-viewport";
-// import keyboard from "./keyboard.js";
+import keyboard from "./keyboard.js";
 import Grid from "./grid.js";
 import Background from "./background.js";
 import Token from "./token.js";
@@ -50,6 +50,11 @@ export default class TableTop {
     // const up = keyboard("ArrowUp");
     // const right = keyboard("ArrowRight");
     // const down = keyboard("ArrowDown");
+    const del = keyboard("Backspace");
+
+    del.press = () => {
+      if (this.selectedToken) this.state.tokens.remove(this.selectedToken);
+    };
 
     // //Left arrow key `press` method
     // left.press = () => {
@@ -139,6 +144,10 @@ export default class TableTop {
       this.layers.tokens.add(
         new Token(this.state.settings, this.assetLoader, token)
       );
+    });
+
+    this.state.on("state:tokens:remove", (token) => {
+      this.layers.tokens.remove(token);
     });
 
     this.viewport.addChild(this.layers.tokens.layer);
