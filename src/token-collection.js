@@ -9,26 +9,8 @@ export default class TokenCollection {
   }
 
   add(token) {
-    if (token instanceof Token) {
-      this.tokens.set(token.id, token);
-      token.layer.click = () => {
-        this.tokens.forEach((t) => {
-          t.unselect();
-        });
-        this.state.selectedToken = token;
-        token.select();
-      };
-      token.on("move", ({ x, y }) => {
-        token.x = x;
-        token.y = y;
-        this.state.state.tokens.update(token);
-      });
-      this.layer.addChild(token.layer);
-    } else {
-      throw new Error(
-        '"token" must be an instance of class Token when calling TokenCollection.add'
-      );
-    }
+    this.tokens.set(token.id, token);
+    this.layer.addChild(token.layer);
   }
 
   get(id) {

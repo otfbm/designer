@@ -25,6 +25,7 @@ export default class TableTop {
 
       interaction: this.app.renderer.plugins.interaction, // the interaction module is important for wheel to work properly when renderer.view is placed or scaled
     });
+
     this.app.stage.addChild(this.viewport);
     this.assetLoader = new GameAssets();
     this.assetLoader.add(assets.tokens);
@@ -84,6 +85,51 @@ export default class TableTop {
     // this.app.ticker.add(() => {
     //   // animation stuff
     // });
+    let drag = false;
+    this.viewport.on("mousedown", (e) => {
+      if (e.target && e.target.type === "token") {
+        drag = true;
+        const token = this.layers.tokens.get(e.target.id);
+        token.layer.parent.parent.pause = true;
+      }
+    });
+
+    this.viewport.on("mousemove", (e) => {
+      if (e.target && e.target.type === "token") {
+        const token = this.layers.tokens.get(e.target.id);
+        if (drag) {
+          token.layer.position.x = e.data.getLocalPosition(
+            token.layer.parent
+          ).x;
+          token.layer.position.y = e.data.getLocalPosition(
+            token.layer.parent
+          ).y;
+        }
+      }
+    });
+
+    this.viewport.on("mouseup", (e) => {
+      if (e.target && e.target.type === "token") {
+        const token = this.layers.tokens.get(e.target.id);
+        const pos = e.data.getLocalPosition(token.layer.parent);
+        const closestCellX = Math.ceil(pos.x / state.settings.cellsize);
+        const closestCellY = Math.ceil(pos.y / state.settings.cellsize);
+        this.state.tokens.update({
+          ...token.toJSON(),
+          x: closestCellX,
+          y: closestCellY,
+        });
+
+        this.layers.tokens.tokens.forEach((t) => {
+          t.unselect();
+        });
+        this.selectedToken = token;
+        token.select();
+
+        drag = false;
+        token.layer.parent.parent.pause = false;
+      }
+    });
 
     document.getElementById("canvas").appendChild(this.app.view);
   }

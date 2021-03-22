@@ -1,11 +1,9 @@
 import { Sprite, Container, filters } from "pixi.js";
-import EventEmitter from "eventemitter3";
 
 const _settings = Symbol("settings");
 const _colorFilter = Symbol("colorFilter");
 const _layer = Symbol("layer");
 const _sprite = Symbol("sprite");
-const _events = Symbol("events");
 
 export default class Token {
   constructor(settings, assets, { x, y, src, id }) {
@@ -24,6 +22,9 @@ export default class Token {
     this[_layer] = new Container();
     this[_layer].interactive = true;
 
+    this[_layer].id = this.id;
+    this[_layer].type = "token";
+
     this[_colorFilter] = new filters.ColorMatrixFilter();
     this[_layer].filters = [this[_colorFilter]];
     this[_colorFilter].enabled = false;
@@ -36,11 +37,7 @@ export default class Token {
     sprite.anchor.y = 0.5;
     this[_sprite] = sprite;
 
-    this[_events] = new EventEmitter();
-
     this.move(x, y);
-
-    this.setupDragAndDrop();
 
     this[_layer].addChild(sprite);
   }
@@ -48,29 +45,6 @@ export default class Token {
   update(settings) {
     this[_sprite].width = settings.cellsize;
     this[_sprite].height = settings.cellsize;
-  }
-
-  setupDragAndDrop() {
-    const settings = this[_settings];
-    let drag = false;
-    this.layer.on("mousedown", () => {
-      drag = true;
-      this.layer.parent.parent.pause = true;
-    });
-    this.layer.on("mouseup", (e) => {
-      const pos = e.data.getLocalPosition(this.layer.parent);
-      const closestCellX = Math.ceil(pos.x / settings.cellsize);
-      const closestCellY = Math.ceil(pos.y / settings.cellsize);
-      this[_events].emit("move", { x: closestCellX, y: closestCellY });
-      drag = false;
-      this.layer.parent.parent.pause = false;
-    });
-    this.layer.on("mousemove", (e) => {
-      if (drag) {
-        this.layer.position.x = e.data.getLocalPosition(this.layer.parent).x;
-        this.layer.position.y = e.data.getLocalPosition(this.layer.parent).y;
-      }
-    });
   }
 
   get layer() {
@@ -89,10 +63,6 @@ export default class Token {
     const xy = (i) => i * this[_settings].cellsize - this[_settings].cellsize;
     this[_layer].x = this[_settings].cellsize / 2 + xy(x);
     this[_layer].y = this[_settings].cellsize / 2 + xy(y);
-  }
-
-  on(...args) {
-    this[_events].on(...args);
   }
 
   toJSON() {
