@@ -32,6 +32,8 @@ export default class TableTop {
 
     this.selectedToken = null;
 
+    this.state = state;
+
     this.layers = {
       background: new Background(this.assetLoader),
       grid: new Grid(),
@@ -41,8 +43,6 @@ export default class TableTop {
     this.viewport.addChild(this.layers.background.layer);
     this.viewport.addChild(this.layers.grid.layer);
     this.viewport.addChild(this.layers.tokens.layer);
-
-    this.state = state;
 
     this.viewport.drag().pinch().wheel().decelerate();
 
@@ -144,6 +144,11 @@ export default class TableTop {
       this.layers.tokens.add(
         new Token(this.state.settings, this.assetLoader, token)
       );
+    });
+
+    this.state.on("state:tokens:update", (token) => {
+      const t = this.layers.tokens.get(token.id);
+      t.move(token.x, token.y);
     });
 
     this.state.on("state:tokens:remove", (token) => {

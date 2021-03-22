@@ -36,4 +36,11 @@ export default class Tokens extends Map {
     }
     return false;
   }
+
+  update(token) {
+    this.set(token.id, token);
+    this[_events].emit("state:tokens:update", token);
+    this[_adapter].set("state:tokens", Array.from(this.entries()));
+    return this;
+  }
 }

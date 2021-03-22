@@ -18,12 +18,21 @@ export default class TokenCollection {
         this.state.selectedToken = token;
         token.select();
       };
+      token.on("move", ({ x, y }) => {
+        token.x = x;
+        token.y = y;
+        this.state.state.tokens.update(token);
+      });
       this.layer.addChild(token.layer);
     } else {
       throw new Error(
         '"token" must be an instance of class Token when calling TokenCollection.add'
       );
     }
+  }
+
+  get(id) {
+    return this.tokens.get(id);
   }
 
   update(settings) {
@@ -34,7 +43,6 @@ export default class TokenCollection {
 
   remove(token) {
     const t = this.tokens.get(token.id);
-    // t.
     this.layer.removeChild(t.layer);
     this.tokens.delete(token.id);
   }

@@ -1,9 +1,11 @@
 import { Sprite, Container, filters } from "pixi.js";
+import EventEmitter from "eventemitter3";
 
 const _settings = Symbol("settings");
 const _colorFilter = Symbol("colorFilter");
 const _layer = Symbol("layer");
 const _sprite = Symbol("sprite");
+const _events = Symbol("events");
 
 export default class Token {
   constructor(settings, assets, { x, y, src, id }) {
@@ -11,6 +13,7 @@ export default class Token {
       loader: { resources },
     } = assets;
     const xy = (i) => i * settings.cellsize - settings.cellsize;
+    this.xy = xy;
 
     this.x = x;
     this.y = y;
@@ -33,8 +36,9 @@ export default class Token {
     sprite.anchor.y = 0.5;
     this[_sprite] = sprite;
 
-    this[_layer].x = settings.cellsize / 2 + xy(x);
-    this[_layer].y = settings.cellsize / 2 + xy(y);
+    this[_events] = new EventEmitter();
+
+    this.move(x, y);
 
     this.setupDragAndDrop();
 
@@ -55,13 +59,9 @@ export default class Token {
     });
     this.layer.on("mouseup", (e) => {
       const pos = e.data.getLocalPosition(this.layer.parent);
-      // snap
-      const closestCellX =
-        pos.x - (pos.x % settings.cellsize) + settings.cellsize / 2;
-      const closestCellY =
-        pos.y - (pos.y % settings.cellsize) + settings.cellsize / 2;
-      this.layer.position.x = closestCellX;
-      this.layer.position.y = closestCellY;
+      const closestCellX = Math.ceil(pos.x / settings.cellsize);
+      const closestCellY = Math.ceil(pos.y / settings.cellsize);
+      this[_events].emit("move", { x: closestCellX, y: closestCellY });
       drag = false;
       this.layer.parent.parent.pause = false;
     });
@@ -85,8 +85,19 @@ export default class Token {
     this[_colorFilter].enabled = false;
   }
 
+  move(x, y) {
+    const xy = (i) => i * this[_settings].cellsize - this[_settings].cellsize;
+    this[_layer].x = this[_settings].cellsize / 2 + xy(x);
+    this[_layer].y = this[_settings].cellsize / 2 + xy(y);
+  }
+
+  on(...args) {
+    this[_events].on(...args);
+  }
+
   toJSON() {
     return {
+      id: this.id,
       x: this.x,
       y: this.y,
       src: this.src,
