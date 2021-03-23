@@ -35,11 +35,6 @@ export default class State {
   }
 
   set background(value) {
-    if (!value.src) {
-      throw new Error(
-        'Value given to property "background is invalid. Value must be an object with property "src"'
-      );
-    }
     const changed = this[background].set(value);
     if (changed) {
       this[events].emit("state:background:update", this[background]);

@@ -16,6 +16,12 @@ class BackgroundsForm extends Component {
   render(props, state) {
     return html`<div id="background-selector">
       <div id="background-thumbnails" class="flex flex-wrap -mx-4 -mb-8">
+        <div class="md:w-1/4 px-4 mb-8" onClick="${() => this.onSelect(null)}">
+          <img
+            class="cursor-pointer rounded shadow-md border-solid border-4"
+            src="public/backgrounds/blank.jpg"
+          />
+        </div>
         ${props.backgrounds.map(
           (background) =>
             html`<div

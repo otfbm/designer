@@ -4,7 +4,13 @@ export default class Background {
   }
 
   set({ src } = {}) {
-    if (src && src !== this.src) {
+    if (!src) {
+      // clear background
+      this.src = null;
+      return true;
+    }
+    if (src !== this.src) {
+      // background changed
       this.src = src;
       return true;
     }

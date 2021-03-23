@@ -85,53 +85,58 @@ export default class TableTop {
     // this.app.ticker.add(() => {
     //   // animation stuff
     // });
-    let drag = false;
-    this.viewport.on("mousedown", (e) => {
-      if (e.target && e.target.type === "token") {
-        drag = true;
-        const token = this.layers.tokens.get(e.target.id);
-        token.layer.parent.parent.pause = true;
-      }
-    });
+    this.drag = false;
+    this.viewport.on("mousedown", this.handleDragStart.bind(this));
+    this.viewport.on("touchstart", this.handleDragStart.bind(this));
 
-    this.viewport.on("mousemove", (e) => {
-      if (e.target && e.target.type === "token") {
-        const token = this.layers.tokens.get(e.target.id);
-        if (drag) {
-          token.layer.position.x = e.data.getLocalPosition(
-            token.layer.parent
-          ).x;
-          token.layer.position.y = e.data.getLocalPosition(
-            token.layer.parent
-          ).y;
-        }
-      }
-    });
+    this.viewport.on("mousemove", this.handleDrag.bind(this));
+    this.viewport.on("touchmove", this.handleDrag.bind(this));
 
-    this.viewport.on("mouseup", (e) => {
-      if (e.target && e.target.type === "token") {
-        const token = this.layers.tokens.get(e.target.id);
-        const pos = e.data.getLocalPosition(token.layer.parent);
-        const closestCellX = Math.ceil(pos.x / state.settings.cellsize);
-        const closestCellY = Math.ceil(pos.y / state.settings.cellsize);
-        this.state.tokens.update({
-          ...token.toJSON(),
-          x: closestCellX,
-          y: closestCellY,
-        });
-
-        this.layers.tokens.tokens.forEach((t) => {
-          t.unselect();
-        });
-        this.selectedToken = token;
-        token.select();
-
-        drag = false;
-        token.layer.parent.parent.pause = false;
-      }
-    });
+    this.viewport.on("mouseup", this.handleDragEnd.bind(this));
+    this.viewport.on("touchend", this.handleDragEnd.bind(this));
 
     document.getElementById("canvas").appendChild(this.app.view);
+  }
+
+  handleDragStart(e) {
+    if (e.target && e.target.type === "token") {
+      this.drag = true;
+      const token = this.layers.tokens.get(e.target.id);
+      token.layer.parent.parent.pause = true;
+    }
+  }
+
+  handleDrag(e) {
+    if (e.target && e.target.type === "token") {
+      const token = this.layers.tokens.get(e.target.id);
+      if (this.drag) {
+        token.layer.position.x = e.data.getLocalPosition(token.layer.parent).x;
+        token.layer.position.y = e.data.getLocalPosition(token.layer.parent).y;
+      }
+    }
+  }
+
+  handleDragEnd(e) {
+    if (e.target && e.target.type === "token") {
+      const token = this.layers.tokens.get(e.target.id);
+      const pos = e.data.getLocalPosition(token.layer.parent);
+      const closestCellX = Math.ceil(pos.x / this.state.settings.cellsize);
+      const closestCellY = Math.ceil(pos.y / this.state.settings.cellsize);
+      this.state.tokens.update({
+        ...token.toJSON(),
+        x: closestCellX,
+        y: closestCellY,
+      });
+
+      this.layers.tokens.tokens.forEach((t) => {
+        t.unselect();
+      });
+      this.selectedToken = token;
+      token.select();
+
+      this.drag = false;
+      token.layer.parent.parent.pause = false;
+    }
   }
 
   createTokenAtCoords(tokenData) {
