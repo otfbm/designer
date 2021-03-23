@@ -4,6 +4,7 @@ import SideBar from "./side-bar.js";
 import Modal from "./modal.js";
 import SettingsForm from "./settings-form.js";
 import BackgroundsForm from "./backgrounds-form.js";
+import DragDrop from "../drag-drop.js";
 
 const html = htm.bind(h);
 
@@ -18,45 +19,17 @@ class App extends Component {
       showSettings: false,
       modalTitle: "",
     };
+    this.dragDrop = new DragDrop(this.tokenDrop.bind(this));
+  }
 
-    let dragging = false;
-    let dragTarget = null;
-    let srcElement = null;
-    document.addEventListener("pointerdown", (e) => {
-      if (e.target.classList.contains("token")) {
-        dragging = true;
-        srcElement = e.target;
-        srcElement.classList.add("opacity-70");
-
-        dragTarget = e.target.cloneNode();
-        document.body.appendChild(dragTarget);
-        dragTarget.classList.add("fixed");
-        dragTarget.classList.add("w-16");
-        dragTarget.classList.add("h-16");
-      }
-    });
-    document.addEventListener("pointermove", (e) => {
-      if (dragging && dragTarget) {
-        dragTarget.style.left = e.clientX - 25 + "px";
-        dragTarget.style.top = e.clientY - 25 + "px";
-      }
-    });
-    document.addEventListener("pointerup", (e) => {
-      if (dragging && dragTarget) {
-        document.body.removeChild(dragTarget);
-        dragging = false;
-        dragTarget = null;
-        srcElement.classList.remove("opacity-70");
-        srcElement = null;
-        if (this.state.selectedToken) {
-          props.dropToken({
-            x: e.clientX,
-            y: e.clientY,
-            src: this.state.selectedToken,
-          });
-        }
-      }
-    });
+  tokenDrop({ x, y }) {
+    if (this.state.selectedToken) {
+      this.props.dropToken({
+        x,
+        y,
+        src: this.state.selectedToken,
+      });
+    }
   }
 
   selectBackground(background) {
@@ -68,10 +41,12 @@ class App extends Component {
     this.props.worldState.on("state:settings:update", (settings) => {
       this.setState({ settings });
     });
+    this.dragDrop.enable();
   }
 
   componentWillUnmount() {
     this.props.worldState.off("state:settings:update");
+    this.dragDrop.disable();
   }
 
   render(props, state) {
