@@ -13,12 +13,13 @@ const localStorageAdapter = Symbol("localStorageAdapter");
 const httpAdapter = Symbol("httpAdapter");
 
 export default class State {
-  constructor(adapter = new LocalStorageAdapter()) {
+  constructor(id, adapter = new LocalStorageAdapter()) {
+    this.id = id;
     this[events] = new EventEmitter();
     this[localStorageAdapter] = adapter;
     // this[httpAdapter] = new HttpAdapter();
     this[settings] = new Settings();
-    this[_tokens] = new Tokens(this[events], this[localStorageAdapter]);
+    this[_tokens] = new Tokens(id, this[events], this[localStorageAdapter]);
     this[background] = new Background();
   }
 
@@ -38,7 +39,10 @@ export default class State {
     const changed = this[background].set(value);
     if (changed) {
       this[events].emit("state:background:update", this[background]);
-      this[localStorageAdapter].set("state:background", this[background]);
+      this[localStorageAdapter].set(
+        `${this.id}:state:background`,
+        this[background]
+      );
     }
   }
 
@@ -74,15 +78,20 @@ export default class State {
     const changed = this[settings].set(values);
     if (changed) {
       this[events].emit("state:settings:update", this.settings);
-      this[localStorageAdapter].set("state:settings", this.settings);
+      this[localStorageAdapter].set(`${this.id}:state:settings`, this.settings);
     }
   }
 
   async load() {
-    this.background = this[localStorageAdapter].get("state:background");
-    this.settings = this[localStorageAdapter].get("state:settings") || {};
+    this.background = this[localStorageAdapter].get(
+      `${this.id}:state:background`
+    );
+    this.settings =
+      this[localStorageAdapter].get(`${this.id}:state:settings`) || {};
 
-    const tokens = new Map(this[localStorageAdapter].get("state:tokens"));
+    const tokens = new Map(
+      this[localStorageAdapter].get(`${this.id}:state:tokens`)
+    );
     if (tokens) {
       for (const value of tokens.values()) {
         this[_tokens].add(value);

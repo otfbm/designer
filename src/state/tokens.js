@@ -11,8 +11,9 @@ function uuidv4() {
 }
 
 export default class Tokens extends Map {
-  constructor(events, adapter) {
+  constructor(id, events, adapter) {
     super();
+    this.id = id;
     this[_events] = events;
     this[_adapter] = adapter;
   }
@@ -21,7 +22,7 @@ export default class Tokens extends Map {
     token.id = uuidv4();
     this.set(token.id, token);
     this[_events].emit("state:tokens:add", token);
-    this[_adapter].set("state:tokens", Array.from(this.entries()));
+    this[_adapter].set(`${this.id}:state:tokens`, Array.from(this.entries()));
     return this;
   }
 
@@ -30,7 +31,10 @@ export default class Tokens extends Map {
       const success = this.delete(token.id);
       if (success) {
         this[_events].emit("state:tokens:remove", token);
-        this[_adapter].set("state:tokens", Array.from(this.entries()));
+        this[_adapter].set(
+          `${this.id}:state:tokens`,
+          Array.from(this.entries())
+        );
       }
       return success;
     }
@@ -40,7 +44,7 @@ export default class Tokens extends Map {
   update(token) {
     this.set(token.id, token);
     this[_events].emit("state:tokens:update", token);
-    this[_adapter].set("state:tokens", Array.from(this.entries()));
+    this[_adapter].set(`${this.id}:state:tokens`, Array.from(this.entries()));
     return this;
   }
 }

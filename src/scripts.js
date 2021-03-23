@@ -8,10 +8,15 @@ import State from "./state/state.js";
 const html = htm.bind(h);
 
 const main = async () => {
+  const url = new URL(window.location.href);
+  const id = url.searchParams.get("id");
+
+  if (!id) throw new Error("id is a required query parameter");
+
   const assets = new Assets();
   await assets.load();
 
-  const state = new State();
+  const state = new State(id);
 
   const tabletop = new TableTop({ assets, state });
 
