@@ -13,7 +13,7 @@ app.register(fastifyStatic, {
   prefix: "/public/",
 });
 
-app.get("/", (request, reply) => {
+app.get("/:id", (request, reply) => {
   reply.type("text/html");
   reply.send(fs.createReadStream(path.join(__dirname, "index.html")));
 });
