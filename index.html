@@ -2,11 +2,12 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
         <title>Atlas POC</title>
         <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
         <!-- <link rel="stylesheet" href="public/styles.css" type="text/css"> -->
     </head>
-    <body class="font-sans overflow-hidden">
+    <body ondragstart="return false;" ondrop="return false;" class="font-sans overflow-hidden">
         <section id="canvas" class="absolute inset-0 overflow-hidden"></section>
         <section id="app"></section>
         <script type="module" src="/public/scripts.js"></script>

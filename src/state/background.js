@@ -3,15 +3,15 @@ export default class Background {
     this.src = "";
   }
 
-  set({ src } = {}) {
-    if (!src) {
+  set(opts = {}) {
+    if (!opts || !opts.src) {
       // clear background
       this.src = null;
       return true;
     }
-    if (src !== this.src) {
+    if (opts && opts.src && opts.src !== this.src) {
       // background changed
-      this.src = src;
+      this.src = opts.src;
       return true;
     }
     return false;
