@@ -6,19 +6,26 @@ const html = htm.bind(h);
 class BackgroundsForm extends Component {
   constructor(props) {
     super(props);
-    this.state = { selected: null };
+    this.state = { selected: null, selectedVisual: null };
   }
 
   onSelect = (background) => {
-    this.setState({ selected: background });
+    this.setState({
+      selected: background,
+      selectedVisual: background == null ? "blank" : background,
+    });
   };
 
   render(props, state) {
+    const cl = this.state.selectedVisual;
     return html`<div id="background-selector">
       <div id="background-thumbnails" class="flex flex-wrap -mx-4 -mb-8">
         <div class="md:w-1/4 px-4 mb-8" onClick="${() => this.onSelect(null)}">
           <img
-            class="cursor-pointer rounded shadow-md border-solid border-4"
+            class="cursor-pointer rounded shadow-md border-solid border-4${cl ===
+            "blank"
+              ? " border-indigo-600"
+              : ""}"
             src="public/backgrounds/blank.jpg"
           />
         </div>
@@ -29,7 +36,10 @@ class BackgroundsForm extends Component {
               onClick="${() => this.onSelect(background)}"
             >
               <img
-                class="cursor-pointer rounded shadow-md border-solid border-4"
+                class="cursor-pointer rounded shadow-md border-solid border-4${cl ===
+                background
+                  ? " border-indigo-600"
+                  : ""}"
                 src="${background}"
               />
             </div>`
