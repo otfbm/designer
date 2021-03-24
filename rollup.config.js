@@ -1,14 +1,14 @@
-import { nodeResolve } from '@rollup/plugin-node-resolve';
+import { nodeResolve } from "@rollup/plugin-node-resolve";
 // import { terser } from "rollup-plugin-terser";
-import commonjs from '@rollup/plugin-commonjs';
+import commonjs from "@rollup/plugin-commonjs";
 
 export default {
-  input: './src/scripts.js',
+  input: "./src/scripts.js",
   plugins: [
-      nodeResolve({ browser: true, preferBuiltins: false }),
-      commonjs({
-        include: /node_modules/,
-      }),
+    nodeResolve({ browser: true, preferBuiltins: false }),
+    commonjs({
+      include: /node_modules/,
+    }),
     //   plugin(),
     //   terser({
     //       format: {
@@ -17,10 +17,10 @@ export default {
     //   })
   ],
   output: [
-      { 
-          sourcemap: true,
-          format: 'esm',
-          file: 'dist/scripts.js',
-      },
+    {
+      sourcemap: true,
+      format: "esm",
+      file: "public/scripts.js",
+    },
   ],
 };

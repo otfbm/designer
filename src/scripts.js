@@ -9,12 +9,11 @@ const html = htm.bind(h);
 
 const main = async () => {
   const url = new URL(window.location.href);
-  const urlParts = url.pathname.split("/");
-  const id = urlParts[urlParts.length - 1];
-
-  if (!id) throw new Error(":id is a required url parameter");
+  const id = url.searchParams.get("id");
+  console.log(id);
+  if (!id) throw new Error(":id is a required url query parameter");
   if (!/^[a-z0-9]{6}$/.test(id))
-    throw new Error(":id does not conform to expected url param");
+    throw new Error(":id does not conform to expected url query param");
 
   const assets = new Assets();
   await assets.load();

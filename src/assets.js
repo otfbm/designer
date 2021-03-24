@@ -6,24 +6,24 @@ export default class Assets {
 
   async load() {
     this.backgrounds = [
-      "public/backgrounds/grass-grid.jpg",
-      "public/backgrounds/sand-grid.jpg",
-      "public/backgrounds/stone-grid.jpg",
-      "public/backgrounds/water-grid.jpg",
-      "public/backgrounds/wood-grid.jpg",
-      "public/backgrounds/falls.png",
-      "public/backgrounds/mines.jpg",
-      "public/backgrounds/grass-river.jpg",
-      "public/backgrounds/forge.jpg",
-      "public/backgrounds/grass-rock.jpeg",
+      "backgrounds/grass-grid.jpg",
+      "backgrounds/sand-grid.jpg",
+      "backgrounds/stone-grid.jpg",
+      "backgrounds/water-grid.jpg",
+      "backgrounds/wood-grid.jpg",
+      "backgrounds/falls.png",
+      "backgrounds/mines.jpg",
+      "backgrounds/grass-river.jpg",
+      "backgrounds/forge.jpg",
+      "backgrounds/grass-rock.jpeg",
     ];
     this.tokens = [
-      "public/token_144.png",
-      "public/token_150.png",
-      "public/token_146.png",
-      "public/token_137.png",
-      "public/token_134.png",
-      "public/token_133.png",
+      "token_144.png",
+      "token_150.png",
+      "token_146.png",
+      "token_137.png",
+      "token_134.png",
+      "token_133.png",
     ];
   }
 }

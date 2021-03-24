@@ -1,4 +1,4 @@
 node_modules
-dist/scripts.js
-dist/scripts.js.map
+public/scripts.js
+public/scripts.js.map
 .DS_Store
