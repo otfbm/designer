@@ -46629,6 +46629,8 @@ class TableTop {
     //   // animation stuff
     // });
     this.drag = false;
+    this.dragTarget = null;
+
     this.viewport.on("mousedown", this.handleDragStart.bind(this));
     this.viewport.on("touchstart", this.handleDragStart.bind(this));
 
@@ -46638,6 +46640,8 @@ class TableTop {
     this.viewport.on("mouseup", this.handleDragEnd.bind(this));
     this.viewport.on("touchend", this.handleDragEnd.bind(this));
 
+    this.viewport.on("click", this.handleClick.bind(this));
+
     document.getElementById("canvas").appendChild(this.app.view);
   }
 
@@ -46645,40 +46649,47 @@ class TableTop {
     if (e.target && e.target.type === "token") {
       this.drag = true;
       const token = this.layers.tokens.get(e.target.id);
+      this.dragTarget = token;
       token.layer.parent.parent.pause = true;
     }
   }
 
   handleDrag(e) {
+    if (this.drag && this.dragTarget) {
+      this.dragTarget.layer.position.x = e.data.getLocalPosition(
+        this.dragTarget.layer.parent
+      ).x;
+      this.dragTarget.layer.position.y = e.data.getLocalPosition(
+        this.dragTarget.layer.parent
+      ).y;
+    }
+  }
+
+  handleClick(e) {
+    this.layers.tokens.tokens.forEach((token) => {
+      token.unselect();
+    });
     if (e.target && e.target.type === "token") {
       const token = this.layers.tokens.get(e.target.id);
-      if (this.drag) {
-        token.layer.position.x = e.data.getLocalPosition(token.layer.parent).x;
-        token.layer.position.y = e.data.getLocalPosition(token.layer.parent).y;
-      }
+      this.selectedToken = token;
+      token.select();
     }
   }
 
   handleDragEnd(e) {
-    if (e.target && e.target.type === "token") {
-      const token = this.layers.tokens.get(e.target.id);
-      const pos = e.data.getLocalPosition(token.layer.parent);
+    if (this.drag && this.dragTarget) {
+      const pos = e.data.getLocalPosition(this.dragTarget.layer.parent);
       const closestCellX = Math.ceil(pos.x / this.state.settings.cellsize);
       const closestCellY = Math.ceil(pos.y / this.state.settings.cellsize);
       this.state.tokens.update({
-        ...token.toJSON(),
+        ...this.dragTarget.toJSON(),
         x: closestCellX,
         y: closestCellY,
       });
 
-      this.layers.tokens.tokens.forEach((t) => {
-        t.unselect();
-      });
-      this.selectedToken = token;
-      token.select();
-
+      this.dragTarget.layer.parent.parent.pause = false;
       this.drag = false;
-      token.layer.parent.parent.pause = false;
+      this.dragTarget = null;
     }
   }
 
