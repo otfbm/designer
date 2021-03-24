@@ -46753,7 +46753,7 @@ class TableTop {
   }
 }
 
-const html$6 = htm.bind(a);
+const html$8 = htm.bind(a);
 
 class Token extends p$1 {
   constructor() {
@@ -46776,7 +46776,7 @@ class Token extends p$1 {
   render(props) {
     const { src, select } = props;
 
-    return html$6`<li>
+    return html$8`<li>
       <img
         class="mb-1 token object-scale-down object-center"
         src="${src}"
@@ -46786,7 +46786,7 @@ class Token extends p$1 {
   }
 }
 
-const html$5 = htm.bind(a);
+const html$7 = htm.bind(a);
 
 class SideBar extends p$1 {
   constructor() {
@@ -46794,7 +46794,7 @@ class SideBar extends p$1 {
   }
 
   render({ tokens, openSettings, openBackgrounds, selectToken }) {
-    return html$5`<div
+    return html$7`<div
       id="sidebar"
       class="absolute inset-y-0 right-0 w-16 bg-white bg-opacity-50 shadow p-1"
     >
@@ -46808,7 +46808,7 @@ class SideBar extends p$1 {
         <ul>
           ${tokens.map(
             (token) =>
-              html$5`<${Token} src="${token}" select="${selectToken}"><//>`
+              html$7`<${Token} src="${token}" select="${selectToken}"><//>`
           )}
         </ul>
         <button id="new-token">
@@ -46819,38 +46819,64 @@ class SideBar extends p$1 {
   }
 }
 
-const html$4 = htm.bind(a);
+const html$6 = htm.bind(a);
 
-const Modal = ({ title = "", show, close, children }) =>
+const Modal = ({ show, children }) =>
   show
-    ? html$4`
+    ? html$6`
         <div
           class="flex items-center justify-center fixed left-0 top-0 w-full h-full bg-gray-800 bg-opacity-75"
         >
           <div
             class="flex flex-col bg-white rounded-lg md:w-1/2 md:w-1/2 h-3/4 overflow-hidden"
           >
-            <div class="flex items-center p-8">
-              <div class="text-gray-900 font-medium text-lg">${title}</div>
-              <svg
-                onClick="${close}"
-                class="ml-auto fill-current text-gray-700 w-6 h-6 cursor-pointer"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 18 18"
-              >
-                <path
-                  d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"
-                />
-              </svg>
-            </div>
-            <hr />
-            <div class="p-8 overflow-auto">
-              <div class="">${children}</div>
-            </div>
+            ${children}
           </div>
         </div>
       `
-    : html$4``;
+    : html$6``;
+
+const html$5 = htm.bind(a);
+
+const ModalHeader = ({ children, close }) =>
+  html$5`
+    <div class="flex items-center p-8">
+      <div class="text-gray-900 font-medium text-lg">${children}</div>
+      <svg
+        onClick="${close}"
+        class="ml-auto fill-current text-gray-700 w-6 h-6 cursor-pointer"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 18 18"
+      >
+        <path
+          d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"
+        />
+      </svg>
+    </div>
+    <hr />
+  `;
+
+const html$4 = htm.bind(a);
+
+const ModalFooter = ({ close, action, children }) =>
+  html$4`
+    <hr />
+    <div class="flex items-center p-8">
+      <button
+        class="ml-auto background-transparent px-4 py-2 outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+        onClick="${close}"
+      >
+        close
+      </button>
+      <button
+        type="submit"
+        onClick="${action}"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        ${children || "Save"}
+      </button>
+    </div>
+  `;
 
 const html$3 = htm.bind(a);
 
@@ -46872,7 +46898,7 @@ class SettingsForm extends p$1 {
     this.setState({ [name]: value });
   };
 
-  render(_, state) {
+  render(props, state) {
     const {
       name,
       width,
@@ -46883,143 +46909,140 @@ class SettingsForm extends p$1 {
       gridTransparency,
       gridColor,
     } = state;
-    return html$3`
-      <div class="flex items-center h-full w-full bg-teal-lighter">
+    return html$3`<${ModalHeader} close=${props.close}>Settings<//>
+      <div class="p-8 overflow-auto">
         <div class="">
-          <form class="mb-4" onSubmit=${this.onSubmit}>
-            <div class="flex flex-col mb-4">
-              <label
-                class="mb-2 uppercase font-bold text-sm text-grey-darkest"
-                for="name"
-                >Map Name</label
-              >
-              <input
-                class="border py-2 px-3 text-grey-darkest"
-                name="name"
-                type="text"
-                value=${name}
-                onInput=${this.onInput}
-              />
-            </div>
+          <div class="flex items-center h-full w-full bg-teal-lighter">
+            <div class="">
+              <form class="mb-4">
+                <div class="flex flex-col mb-4">
+                  <label
+                    class="mb-2 uppercase font-bold text-sm text-grey-darkest"
+                    for="name"
+                    >Map Name</label
+                  >
+                  <input
+                    class="border py-2 px-3 text-grey-darkest"
+                    name="name"
+                    type="text"
+                    value=${name}
+                    onInput=${this.onInput}
+                  />
+                </div>
 
-            <div class="flex flex-col mb-4">
-              <label
-                class="mb-2 uppercase font-bold text-sm text-grey-darkest"
-                for="width"
-                >Width (Number of Cells)</label
-              >
-              <input
-                class="border py-2 px-3 text-grey-darkest"
-                name="width"
-                type="number"
-                value=${width}
-                onInput=${this.onInput}
-              />
-            </div>
+                <div class="flex flex-col mb-4">
+                  <label
+                    class="mb-2 uppercase font-bold text-sm text-grey-darkest"
+                    for="width"
+                    >Width (Number of Cells)</label
+                  >
+                  <input
+                    class="border py-2 px-3 text-grey-darkest"
+                    name="width"
+                    type="number"
+                    value=${width}
+                    onInput=${this.onInput}
+                  />
+                </div>
 
-            <div class="flex flex-col mb-4">
-              <label
-                class="mb-2 uppercase font-bold text-sm text-grey-darkest"
-                for="height"
-                >Height (Number of Cells)</label
-              >
-              <input
-                class="border py-2 px-3 text-grey-darkest"
-                name="height"
-                type="number"
-                value=${height}
-                onInput=${this.onInput}
-              />
-            </div>
+                <div class="flex flex-col mb-4">
+                  <label
+                    class="mb-2 uppercase font-bold text-sm text-grey-darkest"
+                    for="height"
+                    >Height (Number of Cells)</label
+                  >
+                  <input
+                    class="border py-2 px-3 text-grey-darkest"
+                    name="height"
+                    type="number"
+                    value=${height}
+                    onInput=${this.onInput}
+                  />
+                </div>
 
-            <div class="flex flex-col mb-4">
-              <label
-                class="mb-2 uppercase font-bold text-sm text-grey-darkest"
-                for="cellsize"
-                >Cell Size (px)</label
-              >
-              <input
-                class="border py-2 px-3 text-grey-darkest"
-                name="cellsize"
-                type="number"
-                value=${cellsize}
-                onInput=${this.onInput}
-              />
-            </div>
+                <div class="flex flex-col mb-4">
+                  <label
+                    class="mb-2 uppercase font-bold text-sm text-grey-darkest"
+                    for="cellsize"
+                    >Cell Size (px)</label
+                  >
+                  <input
+                    class="border py-2 px-3 text-grey-darkest"
+                    name="cellsize"
+                    type="number"
+                    value=${cellsize}
+                    onInput=${this.onInput}
+                  />
+                </div>
 
-            <div class="flex flex-col mb-4">
-              <label
-                class="mb-2 uppercase font-bold text-sm text-grey-darkest"
-                for="resolution"
-                >Resolution</label
-              >
-              <input
-                class="border py-2 px-3 text-grey-darkest"
-                name="resolution"
-                type="number"
-                value=${resolution}
-                onInput=${this.onInput}
-              />
-            </div>
+                <div class="flex flex-col mb-4">
+                  <label
+                    class="mb-2 uppercase font-bold text-sm text-grey-darkest"
+                    for="resolution"
+                    >Resolution</label
+                  >
+                  <input
+                    class="border py-2 px-3 text-grey-darkest"
+                    name="resolution"
+                    type="number"
+                    value=${resolution}
+                    onInput=${this.onInput}
+                  />
+                </div>
 
-            <div class="flex flex-col mb-4">
-              <label
-                class="mb-2 uppercase font-bold text-sm text-grey-darkest"
-                for="backgroundColor"
-                >Background Color (hexidecimal string eg. 8f8f8f)</label
-              >
-              <input
-                class="border py-2 px-3 text-grey-darkest"
-                name="backgroundColor"
-                type="text"
-                value=${backgroundColor}
-                onInput=${this.onInput}
-              />
-            </div>
+                <div class="flex flex-col mb-4">
+                  <label
+                    class="mb-2 uppercase font-bold text-sm text-grey-darkest"
+                    for="backgroundColor"
+                    >Background Color (hexidecimal string eg. 8f8f8f)</label
+                  >
+                  <input
+                    class="border py-2 px-3 text-grey-darkest"
+                    name="backgroundColor"
+                    type="text"
+                    value=${backgroundColor}
+                    onInput=${this.onInput}
+                  />
+                </div>
 
-            <div class="flex flex-col mb-4">
-              <label
-                class="mb-2 uppercase font-bold text-sm text-grey-darkest"
-                for="gridTransparency"
-                >Grid Transparency (from 0 - 1)</label
-              >
-              <input
-                class="border py-2 px-3 text-grey-darkest"
-                name="gridTransparency"
-                type="number"
-                step="0.1"
-                value=${gridTransparency}
-                onInput=${this.onInput}
-              />
-            </div>
+                <div class="flex flex-col mb-4">
+                  <label
+                    class="mb-2 uppercase font-bold text-sm text-grey-darkest"
+                    for="gridTransparency"
+                    >Grid Transparency (from 0 - 1)</label
+                  >
+                  <input
+                    class="border py-2 px-3 text-grey-darkest"
+                    name="gridTransparency"
+                    type="number"
+                    step="0.1"
+                    value=${gridTransparency}
+                    onInput=${this.onInput}
+                  />
+                </div>
 
-            <div class="flex flex-col mb-4">
-              <label
-                class="mb-2 uppercase font-bold text-sm text-grey-darkest"
-                for="gridColor"
-                >Grid Color (hexidecimal string eg. 8f8f8f)</label
-              >
-              <input
-                class="border py-2 px-3 text-grey-darkest"
-                name="gridColor"
-                type="string"
-                value=${gridColor}
-                onInput=${this.onInput}
-              />
+                <div class="flex flex-col mb-4">
+                  <label
+                    class="mb-2 uppercase font-bold text-sm text-grey-darkest"
+                    for="gridColor"
+                    >Grid Color (hexidecimal string eg. 8f8f8f)</label
+                  >
+                  <input
+                    class="border py-2 px-3 text-grey-darkest"
+                    name="gridColor"
+                    type="string"
+                    value=${gridColor}
+                    onInput=${this.onInput}
+                  />
+                </div>
+              </form>
             </div>
-
-            <div class="ml-auto mt-5">
-              <button
-                type="submit"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Save
-              </button>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
-    `;
+      <${ModalFooter} close=${props.close} action=${this.onSubmit.bind(this)}
+        >Select<//
+      >`;
   }
 }
 
@@ -47040,42 +47063,47 @@ class BackgroundsForm extends p$1 {
 
   render(props, state) {
     const cl = this.state.selectedVisual;
-    return html$2`<div id="background-selector">
-      <div id="background-thumbnails" class="flex flex-wrap -mx-4 -mb-8">
-        <div class="md:w-1/4 px-4 mb-8" onClick="${() => this.onSelect(null)}">
-          <img
-            class="cursor-pointer rounded shadow-md border-solid border-4${cl ===
-            "blank"
-              ? " border-indigo-600"
-              : ""}"
-            src="backgrounds/blank.jpg"
-          />
+    return html$2`<${ModalHeader} close=${props.close}>Backgrounds<//>
+      <div class="p-8 overflow-auto">
+        <div class="">
+          <div id="background-selector">
+            <div id="background-thumbnails" class="flex flex-wrap -mx-4 -mb-8">
+              <div
+                class="md:w-1/4 px-4 mb-8"
+                onClick="${() => this.onSelect(null)}"
+              >
+                <img
+                  class="cursor-pointer rounded shadow-md border-solid border-4${cl ===
+                  "blank"
+                    ? " border-indigo-600"
+                    : ""}"
+                  src="backgrounds/blank.jpg"
+                />
+              </div>
+              ${props.backgrounds.map(
+                (background) =>
+                  html$2`<div
+                    class="md:w-1/4 px-4 mb-8"
+                    onClick="${() => this.onSelect(background)}"
+                  >
+                    <img
+                      class="cursor-pointer rounded shadow-md border-solid border-4${cl ===
+                      background
+                        ? " border-indigo-600"
+                        : ""}"
+                      src="${background}"
+                    />
+                  </div>`
+              )}
+            </div>
+          </div>
         </div>
-        ${props.backgrounds.map(
-          (background) =>
-            html$2`<div
-              class="md:w-1/4 px-4 mb-8"
-              onClick="${() => this.onSelect(background)}"
-            >
-              <img
-                class="cursor-pointer rounded shadow-md border-solid border-4${cl ===
-                background
-                  ? " border-indigo-600"
-                  : ""}"
-                src="${background}"
-              />
-            </div>`
-        )}
       </div>
-      <div class="ml-auto mt-5">
-        <button
-          onClick="${() => props.select(state.selected)}"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Select
-        </button>
-      </div>
-    </div>`;
+      <${ModalFooter}
+        close=${props.close}
+        action=${() => props.select(this.state.selected)}
+        >Select<//
+      >`;
   }
 }
 
@@ -47177,6 +47205,12 @@ class App extends p$1 {
     this.dragDrop.disable();
   }
 
+  callToAction() {}
+
+  closeModal() {
+    this.setState({ show: false });
+  }
+
   render(props, state) {
     return html$1`
       <${SideBar}
@@ -47199,21 +47233,19 @@ class App extends p$1 {
             modalTitle: "Backgrounds",
           })}"
       ><//>
-      <${Modal}
-        title=${state.modalTitle}
-        show=${state.show}
-        close=${() => this.setState({ show: false })}
-      >
+      <${Modal} show=${state.show}>
         ${state.showSettings
           ? html$1`<${SettingsForm}
               submit="${(settings) => (props.worldState.settings = settings)}"
               initialSettings="${state.settings}"
+              close=${this.closeModal.bind(this)}
             ><//>`
           : html$1``}
         ${state.showBackgrounds
           ? html$1`<${BackgroundsForm}
               select="${this.selectBackground.bind(this)}"
               backgrounds="${props.assets.backgrounds}"
+              close=${this.closeModal.bind(this)}
             ><//>`
           : html$1``}
       <//>

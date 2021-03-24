@@ -49,6 +49,12 @@ class App extends Component {
     this.dragDrop.disable();
   }
 
+  callToAction() {}
+
+  closeModal() {
+    this.setState({ show: false });
+  }
+
   render(props, state) {
     return html`
       <${SideBar}
@@ -71,21 +77,19 @@ class App extends Component {
             modalTitle: "Backgrounds",
           })}"
       ><//>
-      <${Modal}
-        title=${state.modalTitle}
-        show=${state.show}
-        close=${() => this.setState({ show: false })}
-      >
+      <${Modal} show=${state.show}>
         ${state.showSettings
           ? html`<${SettingsForm}
               submit="${(settings) => (props.worldState.settings = settings)}"
               initialSettings="${state.settings}"
+              close=${this.closeModal.bind(this)}
             ><//>`
           : html``}
         ${state.showBackgrounds
           ? html`<${BackgroundsForm}
               select="${this.selectBackground.bind(this)}"
               backgrounds="${props.assets.backgrounds}"
+              close=${this.closeModal.bind(this)}
             ><//>`
           : html``}
       <//>
