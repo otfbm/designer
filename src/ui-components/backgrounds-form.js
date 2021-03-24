@@ -26,7 +26,7 @@ class BackgroundsForm extends Component {
             "blank"
               ? " border-indigo-600"
               : ""}"
-            src="public/backgrounds/blank.jpg"
+            src="backgrounds/blank.jpg"
           />
         </div>
         ${props.backgrounds.map(

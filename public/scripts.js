@@ -47039,7 +47039,7 @@ class BackgroundsForm extends p$1 {
             "blank"
               ? " border-indigo-600"
               : ""}"
-            src="public/backgrounds/blank.jpg"
+            src="backgrounds/blank.jpg"
           />
         </div>
         ${props.backgrounds.map(
