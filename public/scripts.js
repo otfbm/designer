@@ -46320,7 +46320,6 @@ function keyboard(value) {
       if (key.isUp && key.press) key.press();
       key.isDown = true;
       key.isUp = false;
-      event.preventDefault();
     }
   };
 
@@ -46330,7 +46329,6 @@ function keyboard(value) {
       if (key.isDown && key.release) key.release();
       key.isDown = false;
       key.isUp = true;
-      event.preventDefault();
     }
   };
 
@@ -46338,14 +46336,25 @@ function keyboard(value) {
   const downListener = key.downHandler.bind(key);
   const upListener = key.upHandler.bind(key);
 
-  window.addEventListener("keydown", downListener, false);
-  window.addEventListener("keyup", upListener, false);
+  window.addEventListener("load", () => {
+    document.querySelector("#canvas canvas").tabIndex = -1;
+    document
+      .querySelector("#canvas canvas")
+      .addEventListener("keydown", downListener, false);
+    document
+      .querySelector("#canvas canvas")
+      .addEventListener("keyup", upListener, false);
 
-  // Detach event listeners
-  key.unsubscribe = () => {
-    window.removeEventListener("keydown", downListener);
-    window.removeEventListener("keyup", upListener);
-  };
+    // Detach event listeners
+    key.unsubscribe = () => {
+      document
+        .querySelector("#canvas canvas")
+        .removeEventListener("keydown", downListener);
+      document
+        .querySelector("#canvas canvas")
+        .removeEventListener("keyup", upListener);
+    };
+  });
 
   return key;
 }
