@@ -46790,10 +46790,10 @@ class SideBar extends p$1 {
       class="absolute inset-y-0 right-0 w-16 bg-white bg-opacity-50 shadow p-1"
     >
       <button id="settings-button" onClick="${() => openSettings()}">
-        <img src="/public/settings.png" />
+        <img src="settings.png" />
       </button>
       <button id="backgrounds-button" onClick="${() => openBackgrounds()}">
-        <img src="/public/picture.png" />
+        <img src="picture.png" />
       </button>
       <div id="token-container">
         <ul>
@@ -46803,7 +46803,7 @@ class SideBar extends p$1 {
           )}
         </ul>
         <button id="new-token">
-          <img src="/public/add.png" />
+          <img src="add.png" />
         </button>
       </div>
     </div>`;
