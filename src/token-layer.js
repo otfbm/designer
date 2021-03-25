@@ -55,8 +55,11 @@ export default class Token {
 
   move() {
     const xy = (i) => i * this[_settings].cellsize - this[_settings].cellsize;
-    this[_layer].x = this[_settings].cellsize / 2 + xy(this[_token].x);
-    this[_layer].y = this[_settings].cellsize / 2 + xy(this[_token].y);
+    const sizeModifier = this[_token].size % 2 === 0 ? 1 : 2;
+    this[_layer].x =
+      this[_settings].cellsize / sizeModifier + xy(this[_token].x);
+    this[_layer].y =
+      this[_settings].cellsize / sizeModifier + xy(this[_token].y);
   }
 
   resize() {
