@@ -28,6 +28,7 @@ export default class Tokens extends Map {
 
   remove(token) {
     if (this.has(token.id)) {
+      this.deselect(token);
       const success = this.delete(token.id);
       if (success) {
         this[_events].emit("state:tokens:remove", token);

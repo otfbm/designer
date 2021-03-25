@@ -9,22 +9,40 @@ class SideBar extends Component {
     super();
   }
 
-  render({ tokens, openSettings, openBackgrounds, selectToken }) {
+  render({ tokens, openSettings, openBackgrounds, gainFocus }) {
     return html`<div
       id="sidebar"
       class="absolute inset-y-0 right-0 w-16 bg-white bg-opacity-50 shadow p-1"
+      onClick="${gainFocus}"
     >
-      <button id="settings-button" onClick="${() => openSettings()}">
+      <button
+        id="settings-button"
+        onClick="${() => {
+          gainFocus();
+          openSettings();
+        }}"
+      >
         <img src="settings.png" />
       </button>
-      <button id="backgrounds-button" onClick="${() => openBackgrounds()}">
+      <button
+        id="backgrounds-button"
+        onClick="${() => {
+          gainFocus();
+          openBackgrounds();
+        }}"
+      >
         <img src="picture.png" />
       </button>
       <div id="token-container">
         <ul>
           ${tokens.map(
             (token) =>
-              html`<${Token} src="${token}" select="${selectToken}"><//>`
+              html`<${Token}
+                src="${token}"
+                select="${() => {
+                  gainFocus();
+                }}"
+              ><//>`
           )}
         </ul>
         <button id="new-token">

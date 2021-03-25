@@ -46778,23 +46778,6 @@ class TableTop {
 const html$9 = htm.bind(a);
 
 class Token extends p$1 {
-  constructor() {
-    super();
-    this.state = {
-      dragging: false,
-      srcElement: null,
-      dragTarget: null,
-      dragPosition: {
-        current: {},
-        previous: {},
-      },
-    };
-  }
-
-  doubleClick(e) {
-    console.log("double click");
-  }
-
   render(props) {
     const { src, select } = props;
 
@@ -46815,22 +46798,40 @@ class SideBar extends p$1 {
     super();
   }
 
-  render({ tokens, openSettings, openBackgrounds, selectToken }) {
+  render({ tokens, openSettings, openBackgrounds, gainFocus }) {
     return html$8`<div
       id="sidebar"
       class="absolute inset-y-0 right-0 w-16 bg-white bg-opacity-50 shadow p-1"
+      onClick="${gainFocus}"
     >
-      <button id="settings-button" onClick="${() => openSettings()}">
+      <button
+        id="settings-button"
+        onClick="${() => {
+          gainFocus();
+          openSettings();
+        }}"
+      >
         <img src="settings.png" />
       </button>
-      <button id="backgrounds-button" onClick="${() => openBackgrounds()}">
+      <button
+        id="backgrounds-button"
+        onClick="${() => {
+          gainFocus();
+          openBackgrounds();
+        }}"
+      >
         <img src="picture.png" />
       </button>
       <div id="token-container">
         <ul>
           ${tokens.map(
             (token) =>
-              html$8`<${Token} src="${token}" select="${selectToken}"><//>`
+              html$8`<${Token}
+                src="${token}"
+                select="${() => {
+                  gainFocus();
+                }}"
+              ><//>`
           )}
         </ul>
         <button id="new-token">
@@ -47212,10 +47213,12 @@ class DragDrop {
       this.srcElement = e.target;
       this.srcElement.classList.add("opacity-70");
       this.dragTarget = e.target.cloneNode();
-      document.body.appendChild(this.dragTarget);
       this.dragTarget.classList.add("fixed");
       this.dragTarget.classList.add("w-16");
       this.dragTarget.classList.add("h-16");
+      this.dragTarget.style.left = "10000px";
+      this.dragTarget.style.top = "10000px";
+      document.body.appendChild(this.dragTarget);
     }
   }
 
@@ -47228,12 +47231,14 @@ class DragDrop {
 
   up(e) {
     if (this.dragging && this.dragTarget) {
+      const src = this.dragTarget.getAttribute("src");
       document.body.removeChild(this.dragTarget);
       this.dragging = false;
       this.dragTarget = null;
       this.srcElement.classList.remove("opacity-70");
       this.srcElement = null;
       this.callback({
+        src,
         x: e.clientX,
         y: e.clientY,
       });
@@ -47269,14 +47274,12 @@ class App extends p$1 {
     this.dragDrop = new DragDrop(this.tokenDrop.bind(this));
   }
 
-  tokenDrop({ x, y }) {
-    if (this.state.selectedToken) {
-      this.props.dropToken({
-        x,
-        y,
-        src: this.state.selectedToken,
-      });
-    }
+  tokenDrop({ x, y, src }) {
+    this.props.dropToken({
+      x,
+      y,
+      src,
+    });
   }
 
   selectBackground(background) {
@@ -47318,9 +47321,6 @@ class App extends p$1 {
     return html$1`
       <${SideBar}
         tokens="${props.assets.tokens}"
-        selectToken="${(token) => {
-          this.setState({ selectedToken: token });
-        }}"
         openSettings="${() =>
           this.setState({
             show: true,
@@ -47335,6 +47335,7 @@ class App extends p$1 {
             showSettings: false,
             modalTitle: "Backgrounds",
           })}"
+        gainFocus="${() => this.setState({ showTokenMenu: false })}"
       ><//>
       <${Modal} show=${state.show}>
         ${state.showSettings
@@ -47500,6 +47501,7 @@ class Tokens extends Map {
 
   remove(token) {
     if (this.has(token.id)) {
+      this.deselect(token);
       const success = this.delete(token.id);
       if (success) {
         this[_events].emit("state:tokens:remove", token);

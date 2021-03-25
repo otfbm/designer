@@ -23,14 +23,12 @@ class App extends Component {
     this.dragDrop = new DragDrop(this.tokenDrop.bind(this));
   }
 
-  tokenDrop({ x, y }) {
-    if (this.state.selectedToken) {
-      this.props.dropToken({
-        x,
-        y,
-        src: this.state.selectedToken,
-      });
-    }
+  tokenDrop({ x, y, src }) {
+    this.props.dropToken({
+      x,
+      y,
+      src,
+    });
   }
 
   selectBackground(background) {
@@ -72,9 +70,6 @@ class App extends Component {
     return html`
       <${SideBar}
         tokens="${props.assets.tokens}"
-        selectToken="${(token) => {
-          this.setState({ selectedToken: token });
-        }}"
         openSettings="${() =>
           this.setState({
             show: true,
@@ -89,6 +84,7 @@ class App extends Component {
             showSettings: false,
             modalTitle: "Backgrounds",
           })}"
+        gainFocus="${() => this.setState({ showTokenMenu: false })}"
       ><//>
       <${Modal} show=${state.show}>
         ${state.showSettings

@@ -12,10 +12,12 @@ export default class DragDrop {
       this.srcElement = e.target;
       this.srcElement.classList.add("opacity-70");
       this.dragTarget = e.target.cloneNode();
-      document.body.appendChild(this.dragTarget);
       this.dragTarget.classList.add("fixed");
       this.dragTarget.classList.add("w-16");
       this.dragTarget.classList.add("h-16");
+      this.dragTarget.style.left = "10000px";
+      this.dragTarget.style.top = "10000px";
+      document.body.appendChild(this.dragTarget);
     }
   }
 
@@ -28,12 +30,14 @@ export default class DragDrop {
 
   up(e) {
     if (this.dragging && this.dragTarget) {
+      const src = this.dragTarget.getAttribute("src");
       document.body.removeChild(this.dragTarget);
       this.dragging = false;
       this.dragTarget = null;
       this.srcElement.classList.remove("opacity-70");
       this.srcElement = null;
       this.callback({
+        src,
         x: e.clientX,
         y: e.clientY,
       });

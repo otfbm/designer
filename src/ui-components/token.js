@@ -4,23 +4,6 @@ import htm from "htm";
 const html = htm.bind(h);
 
 export default class Token extends Component {
-  constructor() {
-    super();
-    this.state = {
-      dragging: false,
-      srcElement: null,
-      dragTarget: null,
-      dragPosition: {
-        current: {},
-        previous: {},
-      },
-    };
-  }
-
-  doubleClick(e) {
-    console.log("double click");
-  }
-
   render(props) {
     const { src, select } = props;
 
