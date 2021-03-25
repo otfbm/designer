@@ -36,7 +36,11 @@ class App extends Component {
     this.setState({ show: false });
   }
 
-  adjustToken(id, key, value) {
+  deleteToken(token) {
+    this.props.worldState.tokens.remove(token);
+  }
+
+  updateToken(id, key, value) {
     this.props.worldState.tokens.update({ id, [key]: value });
   }
 
@@ -65,8 +69,8 @@ class App extends Component {
   }
 
   render(props, state) {
-    const { selectedToken } = this.state;
-    const { id, label, size, rotation } = selectedToken || {};
+    const { selectedToken = {} } = this.state;
+    const { id } = selectedToken;
     return html`
       <${SideBar}
         tokens="${props.assets.tokens}"
@@ -104,11 +108,9 @@ class App extends Component {
       <//>
       <${TokenMenu}
         show=${this.state.showTokenMenu}
-        tokenId="${id}"
-        label="${label}"
-        size="${size}"
-        rotation="${rotation}"
-        change=${(id, key, value) => this.adjustToken(id, key, value)}
+        token=${selectedToken}
+        change=${(id, key, value) => this.updateToken(id, key, value)}
+        delete=${() => this.deleteToken(selectedToken)}
       ><//>
     `;
   }

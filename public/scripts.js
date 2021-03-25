@@ -46851,7 +46851,6 @@ class TokenMenu extends p$1 {
   };
 
   render(props) {
-    const { size = 1, rotation = 0, label = "" } = props;
     if (!props.show) return html$6``;
 
     return html$6`<div
@@ -46866,7 +46865,7 @@ class TokenMenu extends p$1 {
           name="label"
           placeholder="Label"
           class="px-2 py-1 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full"
-          value=${label}
+          value=${props.token.label || ""}
           onInput=${this.onInput.bind(this)}
         />
       </div>
@@ -46880,7 +46879,7 @@ class TokenMenu extends p$1 {
           name="size"
           placeholder="Size"
           class="px-2 py-1 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full"
-          value=${size}
+          value=${props.token.size || ""}
           onInput=${this.onInput.bind(this)}
         />
       </div>
@@ -46894,7 +46893,7 @@ class TokenMenu extends p$1 {
           name="rotation"
           placeholder="rotation"
           class="px-2 py-1 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full"
-          value=${rotation}
+          value=${props.token.rotation || ""}
           onInput=${this.onInput.bind(this)}
         />
       </div>
@@ -46903,6 +46902,7 @@ class TokenMenu extends p$1 {
         <button
           class="bg-red-500 text-white active:bg-red-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mt-1 ease-linear transition-all duration-150 "
           type="button"
+          onClick=${props.delete}
         >
           Delete
         </button>
@@ -47270,7 +47270,11 @@ class App extends p$1 {
     this.setState({ show: false });
   }
 
-  adjustToken(id, key, value) {
+  deleteToken(token) {
+    this.props.worldState.tokens.remove(token);
+  }
+
+  updateToken(id, key, value) {
     this.props.worldState.tokens.update({ id, [key]: value });
   }
 
@@ -47299,8 +47303,7 @@ class App extends p$1 {
   }
 
   render(props, state) {
-    const { selectedToken } = this.state;
-    const { id, label, size, rotation } = selectedToken || {};
+    const { selectedToken = {} } = this.state;
     return html$1`
       <${SideBar}
         tokens="${props.assets.tokens}"
@@ -47338,11 +47341,9 @@ class App extends p$1 {
       <//>
       <${TokenMenu}
         show=${this.state.showTokenMenu}
-        tokenId="${id}"
-        label="${label}"
-        size="${size}"
-        rotation="${rotation}"
-        change=${(id, key, value) => this.adjustToken(id, key, value)}
+        token=${selectedToken}
+        change=${(id, key, value) => this.updateToken(id, key, value)}
+        delete=${() => this.deleteToken(selectedToken)}
       ><//>
     `;
   }
