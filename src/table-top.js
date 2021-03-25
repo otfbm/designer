@@ -215,7 +215,7 @@ export default class TableTop {
 
     this.state.on("state:tokens:update", (token) => {
       const tokenLayer = this.layers.tokens.get(token.id);
-      tokenLayer.move(token.x, token.y);
+      tokenLayer.token = token;
     });
 
     this.state.on("state:tokens:remove", (token) => {

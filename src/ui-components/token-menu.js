@@ -6,7 +6,7 @@ const html = htm.bind(h);
 class TokenMenu extends Component {
   onInput = (e) => {
     const { value, name } = e.target;
-    this.props.change(this.props.tokenId, name, value);
+    this.props.change(this.props.token.id, name, value);
   };
 
   render(props) {

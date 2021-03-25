@@ -70,7 +70,6 @@ class App extends Component {
 
   render(props, state) {
     const { selectedToken = {} } = this.state;
-    const { id } = selectedToken;
     return html`
       <${SideBar}
         tokens="${props.assets.tokens}"

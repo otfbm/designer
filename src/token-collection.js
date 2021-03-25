@@ -18,7 +18,7 @@ export default class TokenCollection {
 
   update(settings) {
     for (const token of Array.from(this.tokens.values())) {
-      token.update(settings);
+      token.settings = settings;
     }
   }
 

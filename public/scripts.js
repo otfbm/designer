@@ -46420,6 +46420,7 @@ class Background$1 {
 }
 
 const _settings = Symbol("settings");
+const _token = Symbol("token");
 const _colorFilter = Symbol("colorFilter");
 const _layer = Symbol("layer");
 const _sprite = Symbol("sprite");
@@ -46433,7 +46434,7 @@ class Token$2 {
     this.xy = xy;
 
     this.id = token.id;
-    this.token = token;
+    this[_token] = token;
 
     this[_settings] = settings;
     this[_layer] = new Container();
@@ -46448,20 +46449,15 @@ class Token$2 {
     this[_colorFilter].hue(45);
 
     const sprite = new Sprite(resources[token.src].texture);
-    sprite.width = settings.cellsize;
-    sprite.height = settings.cellsize;
     sprite.anchor.x = 0.5;
     sprite.anchor.y = 0.5;
     this[_sprite] = sprite;
 
-    this.move(token.x, token.y);
+    this.move();
+    this.resize();
+    this.rotate();
 
     this[_layer].addChild(sprite);
-  }
-
-  update(settings) {
-    this[_sprite].width = settings.cellsize;
-    this[_sprite].height = settings.cellsize;
   }
 
   get layer() {
@@ -46476,10 +46472,35 @@ class Token$2 {
     // this[_colorFilter].enabled = false;
   }
 
-  move(x, y) {
+  move() {
     const xy = (i) => i * this[_settings].cellsize - this[_settings].cellsize;
-    this[_layer].x = this[_settings].cellsize / 2 + xy(x);
-    this[_layer].y = this[_settings].cellsize / 2 + xy(y);
+    this[_layer].x = this[_settings].cellsize / 2 + xy(this[_token].x);
+    this[_layer].y = this[_settings].cellsize / 2 + xy(this[_token].y);
+  }
+
+  resize() {
+    this[_sprite].width =
+      this[_settings].cellsize * parseFloat(this[_token].size);
+    this[_sprite].height =
+      this[_settings].cellsize * parseFloat(this[_token].size);
+  }
+
+  rotate() {
+    this[_sprite].rotation = (this[_token].rotation * Math.PI) / 180;
+  }
+
+  set settings(settings) {
+    this[_settings] = settings;
+    this.move();
+    this.resize();
+    this.rotate();
+  }
+
+  set token(token) {
+    this[_token] = token;
+    this.move();
+    this.resize();
+    this.rotate();
   }
 }
 
@@ -46501,7 +46522,7 @@ class TokenCollection {
 
   update(settings) {
     for (const token of Array.from(this.tokens.values())) {
-      token.update(settings);
+      token.settings = settings;
     }
   }
 
@@ -46747,7 +46768,7 @@ class TableTop {
 
     this.state.on("state:tokens:update", (token) => {
       const tokenLayer = this.layers.tokens.get(token.id);
-      tokenLayer.move(token.x, token.y);
+      tokenLayer.token = token;
     });
 
     this.state.on("state:tokens:remove", (token) => {
@@ -46847,7 +46868,7 @@ const html$6 = htm.bind(a);
 class TokenMenu extends p$1 {
   onInput = (e) => {
     const { value, name } = e.target;
-    this.props.change(this.props.tokenId, name, value);
+    this.props.change(this.props.token.id, name, value);
   };
 
   render(props) {
