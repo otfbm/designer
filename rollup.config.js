@@ -1,5 +1,5 @@
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-// import { terser } from "rollup-plugin-terser";
+import { terser } from "rollup-plugin-terser";
 import commonjs from "@rollup/plugin-commonjs";
 
 export default {
@@ -9,12 +9,11 @@ export default {
     commonjs({
       include: /node_modules/,
     }),
-    //   plugin(),
-    //   terser({
-    //       format: {
-    //           comments: false,
-    //       },
-    //   })
+    terser({
+      format: {
+        comments: false,
+      },
+    }),
   ],
   output: [
     {
