@@ -23,6 +23,7 @@
     "eventemitter3": "^4.0.7",
     "htm": "^3.0.4",
     "http-server": "^0.12.3",
+    "idb": "^6.0.0",
     "microbundle": "^0.13.0",
     "pixi-viewport": "^4.21.1",
     "pixi.js": "^6.0.0",

@@ -22,36 +22,39 @@ export default class Tokens extends Map {
 
   add(data) {
     const token = new Token(data);
-    token.id = uuidv4();
     this.set(token.id, token);
     this[_events].emit("state:tokens:add", token);
-    this[_adapter].set(`${this.id}:state:tokens`, Array.from(this.entries()));
+  }
+
+  async create(data) {
+    const id = uuidv4();
+    const tdata = { id, ...data };
+    await this[_adapter].set("tokens", id, tdata);
+    const token = new Token(tdata);
+    this.set(token.id, token);
+    this[_events].emit("state:tokens:add", token);
     return this;
   }
 
-  remove(data) {
+  async remove(data) {
     if (this.has(data.id)) {
       const token = this.get(data.id);
       this.deselect(token);
       const success = this.delete(token.id);
       if (success) {
         this[_events].emit("state:tokens:remove", token);
-        this[_adapter].set(
-          `${this.id}:state:tokens`,
-          Array.from(this.entries())
-        );
+        await this[_adapter].delete("tokens", token.id);
       }
       return success;
     }
     return false;
   }
 
-  update(data) {
+  async update(data) {
     const token = this.get(data.id);
     this.set(token.id, { ...token, ...data });
     this[_events].emit("state:tokens:update", this.get(token.id));
-    this[_adapter].set(`${this.id}:state:tokens`, Array.from(this.entries()));
-    return this;
+    await this[_adapter].set(`tokens`, token.id, this.get(token.id));
   }
 
   select(data) {

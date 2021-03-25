@@ -1,7 +1,8 @@
 import Settings from "./settings.js";
 import Tokens from "./tokens.js";
 import Background from "./background.js";
-import LocalStorageAdapter from "./adapters/local-storage.js";
+// import LocalStorageAdapter from "./adapters/local-storage.js";
+import IndexDBAdapter from "./adapters/index-db.js";
 // import HttpAdapter from "./adapters/http.js";
 import EventEmitter from "eventemitter3";
 
@@ -9,17 +10,17 @@ const events = Symbol("events");
 const settings = Symbol("settings");
 const _tokens = Symbol("_tokens");
 const background = Symbol("background");
-const localStorageAdapter = Symbol("localStorageAdapter");
-const httpAdapter = Symbol("httpAdapter");
+// const localStorageAdapter = Symbol("localStorageAdapter");
+// const httpAdapter = Symbol("httpAdapter");
+const indexDBAdapter = Symbol("indexDBAdapter");
 
 export default class State {
-  constructor(id, adapter = new LocalStorageAdapter()) {
+  constructor(id) {
     this.id = id;
     this[events] = new EventEmitter();
-    this[localStorageAdapter] = adapter;
-    // this[httpAdapter] = new HttpAdapter();
+    this[indexDBAdapter] = new IndexDBAdapter(`atlas:${id}`);
     this[settings] = new Settings();
-    this[_tokens] = new Tokens(id, this[events], this[localStorageAdapter]);
+    this[_tokens] = new Tokens(id, this[events], this[indexDBAdapter]);
     this[background] = new Background();
   }
 
@@ -39,10 +40,7 @@ export default class State {
     const changed = this[background].set(value);
     if (changed) {
       this[events].emit("state:background:update", this[background]);
-      this[localStorageAdapter].set(
-        `${this.id}:state:background`,
-        this[background]
-      );
+      this[indexDBAdapter].set(`backgrounds`, "background", this[background]);
     }
   }
 
@@ -78,22 +76,21 @@ export default class State {
     const changed = this[settings].set(values);
     if (changed) {
       this[events].emit("state:settings:update", this.settings);
-      this[localStorageAdapter].set(`${this.id}:state:settings`, this.settings);
+      this[indexDBAdapter].set(`settings`, "settings", this.settings);
     }
   }
 
   async load() {
-    this.background = this[localStorageAdapter].get(
-      `${this.id}:state:background`
+    this.background = await this[indexDBAdapter].get(
+      `backgrounds`,
+      "background"
     );
     this.settings =
-      this[localStorageAdapter].get(`${this.id}:state:settings`) || {};
+      (await this[indexDBAdapter].get(`settings`, "settings")) || {};
 
-    const tokens = new Map(
-      this[localStorageAdapter].get(`${this.id}:state:tokens`)
-    );
+    const tokens = await this[indexDBAdapter].getAll("tokens");
     if (tokens) {
-      for (const value of tokens.values()) {
+      for (const value of tokens) {
         this[_tokens].add(value);
       }
     }

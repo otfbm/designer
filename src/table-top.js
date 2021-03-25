@@ -162,7 +162,7 @@ export default class TableTop {
     );
     const cellX = Math.ceil(x / this.state.settings.cellsize);
     const cellY = Math.ceil(y / this.state.settings.cellsize);
-    this.state.tokens.add({
+    this.state.tokens.create({
       x: cellX,
       y: cellY,
       src: tokenData.src,
