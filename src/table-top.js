@@ -124,12 +124,16 @@ export default class TableTop {
 
   handleClick(e) {
     this.layers.tokens.tokens.forEach((token) => {
-      token.unselect();
+      if (this.selectedToken === token) {
+        token.unselect();
+        this.state.tokens.deselect(token);
+      }
     });
     if (e.target && e.target.type === "token") {
       const token = this.layers.tokens.get(e.target.id);
       this.selectedToken = token;
       token.select();
+      this.state.tokens.select(token);
     }
   }
 
@@ -138,8 +142,9 @@ export default class TableTop {
       const pos = e.data.getLocalPosition(this.dragTarget.layer.parent);
       const closestCellX = Math.ceil(pos.x / this.state.settings.cellsize);
       const closestCellY = Math.ceil(pos.y / this.state.settings.cellsize);
+
       this.state.tokens.update({
-        ...this.dragTarget.toJSON(),
+        id: this.dragTarget.id,
         x: closestCellX,
         y: closestCellY,
       });

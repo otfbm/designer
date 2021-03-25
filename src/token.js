@@ -6,7 +6,7 @@ const _layer = Symbol("layer");
 const _sprite = Symbol("sprite");
 
 export default class Token {
-  constructor(settings, assets, { x, y, src, id }) {
+  constructor(settings, assets, { x, y, src, id, size, rotation, label }) {
     const {
       loader: { resources },
     } = assets;
@@ -17,6 +17,9 @@ export default class Token {
     this.y = y;
     this.src = src;
     this.id = id;
+    this.size = size;
+    this.rotation = rotation;
+    this.label = label;
 
     this[_settings] = settings;
     this[_layer] = new Container();
@@ -71,6 +74,9 @@ export default class Token {
       x: this.x,
       y: this.y,
       src: this.src,
+      size: this.size,
+      rotation: this.rotation,
+      label: this.label,
     };
   }
 }

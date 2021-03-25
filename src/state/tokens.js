@@ -42,9 +42,17 @@ export default class Tokens extends Map {
   }
 
   update(token) {
-    this.set(token.id, token);
-    this[_events].emit("state:tokens:update", token);
+    this.set(token.id, { ...this.get(token.id), ...token });
+    this[_events].emit("state:tokens:update", this.get(token.id));
     this[_adapter].set(`${this.id}:state:tokens`, Array.from(this.entries()));
     return this;
+  }
+
+  select(token) {
+    this[_events].emit("state:tokens:select", this.get(token.id));
+  }
+
+  deselect(token) {
+    this[_events].emit("state:tokens:deselect", this.get(token.id));
   }
 }

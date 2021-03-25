@@ -46425,7 +46425,7 @@ const _layer = Symbol("layer");
 const _sprite = Symbol("sprite");
 
 class Token$1 {
-  constructor(settings, assets, { x, y, src, id }) {
+  constructor(settings, assets, { x, y, src, id, size, rotation, label }) {
     const {
       loader: { resources },
     } = assets;
@@ -46436,6 +46436,9 @@ class Token$1 {
     this.y = y;
     this.src = src;
     this.id = id;
+    this.size = size;
+    this.rotation = rotation;
+    this.label = label;
 
     this[_settings] = settings;
     this[_layer] = new Container();
@@ -46490,6 +46493,9 @@ class Token$1 {
       x: this.x,
       y: this.y,
       src: this.src,
+      size: this.size,
+      rotation: this.rotation,
+      label: this.label,
     };
   }
 }
@@ -46667,12 +46673,16 @@ class TableTop {
 
   handleClick(e) {
     this.layers.tokens.tokens.forEach((token) => {
-      token.unselect();
+      if (this.selectedToken === token) {
+        token.unselect();
+        this.state.tokens.deselect(token);
+      }
     });
     if (e.target && e.target.type === "token") {
       const token = this.layers.tokens.get(e.target.id);
       this.selectedToken = token;
       token.select();
+      this.state.tokens.select(token);
     }
   }
 
@@ -46681,8 +46691,9 @@ class TableTop {
       const pos = e.data.getLocalPosition(this.dragTarget.layer.parent);
       const closestCellX = Math.ceil(pos.x / this.state.settings.cellsize);
       const closestCellY = Math.ceil(pos.y / this.state.settings.cellsize);
+
       this.state.tokens.update({
-        ...this.dragTarget.toJSON(),
+        id: this.dragTarget.id,
         x: closestCellX,
         y: closestCellY,
       });
@@ -46764,7 +46775,7 @@ class TableTop {
   }
 }
 
-const html$8 = htm.bind(a);
+const html$9 = htm.bind(a);
 
 class Token extends p$1 {
   constructor() {
@@ -46787,7 +46798,7 @@ class Token extends p$1 {
   render(props) {
     const { src, select } = props;
 
-    return html$8`<li>
+    return html$9`<li>
       <img
         class="mb-1 token object-scale-down object-center"
         src="${src}"
@@ -46797,7 +46808,7 @@ class Token extends p$1 {
   }
 }
 
-const html$7 = htm.bind(a);
+const html$8 = htm.bind(a);
 
 class SideBar extends p$1 {
   constructor() {
@@ -46805,7 +46816,7 @@ class SideBar extends p$1 {
   }
 
   render({ tokens, openSettings, openBackgrounds, selectToken }) {
-    return html$7`<div
+    return html$8`<div
       id="sidebar"
       class="absolute inset-y-0 right-0 w-16 bg-white bg-opacity-50 shadow p-1"
     >
@@ -46819,7 +46830,7 @@ class SideBar extends p$1 {
         <ul>
           ${tokens.map(
             (token) =>
-              html$7`<${Token} src="${token}" select="${selectToken}"><//>`
+              html$8`<${Token} src="${token}" select="${selectToken}"><//>`
           )}
         </ul>
         <button id="new-token">
@@ -46830,11 +46841,11 @@ class SideBar extends p$1 {
   }
 }
 
-const html$6 = htm.bind(a);
+const html$7 = htm.bind(a);
 
 const Modal = ({ show, children }) =>
   show
-    ? html$6`
+    ? html$7`
         <div
           class="flex items-center justify-center fixed left-0 top-0 w-full h-full bg-gray-800 bg-opacity-75"
         >
@@ -46845,7 +46856,76 @@ const Modal = ({ show, children }) =>
           </div>
         </div>
       `
-    : html$6``;
+    : html$7``;
+
+const html$6 = htm.bind(a);
+
+class TokenMenu extends p$1 {
+  onInput = (e) => {
+    const { value, name } = e.target;
+    this.props.change(this.props.tokenId, name, value);
+  };
+
+  render(props) {
+    const { size = 1, rotation = 0, label = "" } = props;
+    if (!props.show) return html$6``;
+
+    return html$6`<div
+      class="fixed top-10 left-10 w-48 h-auto bg-black opacity-70 rounded p-1"
+    >
+      <label class="mb-1 uppercase font-bold text-sm text-white" for="label"
+        >Label</label
+      >
+      <div class="mb-1 pt-0">
+        <input
+          type="text"
+          name="label"
+          placeholder="Label"
+          class="px-2 py-1 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full"
+          value=${label}
+          onInput=${this.onInput.bind(this)}
+        />
+      </div>
+
+      <label class="mb-1 uppercase font-bold text-sm text-white" for="size"
+        >Size</label
+      >
+      <div class="mb-1 pt-0">
+        <input
+          type="text"
+          name="size"
+          placeholder="Size"
+          class="px-2 py-1 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full"
+          value=${size}
+          onInput=${this.onInput.bind(this)}
+        />
+      </div>
+
+      <label class="mb-1 uppercase font-bold text-sm text-white" for="rotation"
+        >Rotation</label
+      >
+      <div class="mb-1 pt-0">
+        <input
+          type="text"
+          name="rotation"
+          placeholder="rotation"
+          class="px-2 py-1 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full"
+          value=${rotation}
+          onInput=${this.onInput.bind(this)}
+        />
+      </div>
+
+      <div class="flex justify-end">
+        <button
+          class="bg-red-500 text-white active:bg-red-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mt-1 ease-linear transition-all duration-150 "
+          type="button"
+        >
+          Delete
+        </button>
+      </div>
+    </div>`;
+  }
+}
 
 const html$5 = htm.bind(a);
 
@@ -47204,25 +47284,37 @@ class App extends p$1 {
     this.setState({ show: false });
   }
 
+  adjustToken(id, key, value) {
+    this.props.worldState.tokens.update({ id, [key]: value });
+  }
+
   componentDidMount() {
     this.props.worldState.on("state:settings:update", (settings) => {
       this.setState({ settings });
+    });
+    this.props.worldState.on("state:tokens:select", (token) => {
+      this.setState({ selectedToken: token, showTokenMenu: true });
+    });
+    this.props.worldState.on("state:tokens:deselect", () => {
+      this.setState({ selectedToken: null, showTokenMenu: false });
     });
     this.dragDrop.enable();
   }
 
   componentWillUnmount() {
     this.props.worldState.off("state:settings:update");
+    this.props.worldState.off("state:tokens:select");
+    this.props.worldState.off("state:tokens:deselect");
     this.dragDrop.disable();
   }
-
-  callToAction() {}
 
   closeModal() {
     this.setState({ show: false });
   }
 
   render(props, state) {
+    const { selectedToken } = this.state;
+    const { id, label, size, rotation } = selectedToken || {};
     return html$1`
       <${SideBar}
         tokens="${props.assets.tokens}"
@@ -47260,6 +47352,14 @@ class App extends p$1 {
             ><//>`
           : html$1``}
       <//>
+      <${TokenMenu}
+        show=${this.state.showTokenMenu}
+        tokenId="${id}"
+        label="${label}"
+        size="${size}"
+        rotation="${rotation}"
+        change=${(id, key, value) => this.adjustToken(id, key, value)}
+      ><//>
     `;
   }
 }
@@ -47414,10 +47514,18 @@ class Tokens extends Map {
   }
 
   update(token) {
-    this.set(token.id, token);
-    this[_events].emit("state:tokens:update", token);
+    this.set(token.id, { ...this.get(token.id), ...token });
+    this[_events].emit("state:tokens:update", this.get(token.id));
     this[_adapter].set(`${this.id}:state:tokens`, Array.from(this.entries()));
     return this;
+  }
+
+  select(token) {
+    this[_events].emit("state:tokens:select", this.get(token.id));
+  }
+
+  deselect(token) {
+    this[_events].emit("state:tokens:deselect", this.get(token.id));
   }
 }
 
