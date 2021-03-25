@@ -1,10 +1,13 @@
-import { Sprite, Container, filters } from "pixi.js";
+import { Sprite, Container, filters, TextStyle, Text, Graphics } from "pixi.js";
 
 const _settings = Symbol("settings");
 const _token = Symbol("token");
 const _colorFilter = Symbol("colorFilter");
 const _layer = Symbol("layer");
 const _sprite = Symbol("sprite");
+const _label = Symbol("label");
+const _labelBackground = Symbol("labelBackground");
+const _labelText = Symbol("labelText");
 
 export default class Token {
   constructor(settings, assets, token) {
@@ -39,6 +42,33 @@ export default class Token {
     this.rotate();
 
     this[_layer].addChild(sprite);
+
+    const style = new TextStyle({
+      fontFamily: "Arial",
+      fontSize: 18,
+      fill: "white",
+      // stroke: "#ff3300",
+      // strokeThickness: 4,
+      // dropShadow: true,
+      // dropShadowColor: "#000000",
+      // dropShadowBlur: 4,
+      // dropShadowAngle: Math.PI / 6,
+      // dropShadowDistance: 6,
+    });
+    const label = new Container();
+    this[_label] = label;
+    this[_labelBackground] = new Graphics();
+    // this[_labelBackground].lineStyle(4, 0x99ccff, 1);
+
+    // this[_labelBackground].x = 48;
+    // this[_labelBackground].y = 190;
+    this[_label].addChild(this[_labelBackground]);
+    const labelText = new Text("", style);
+    label.addChild(labelText);
+    this[_layer].addChild(label);
+    this[_labelText] = labelText;
+
+    this.label();
   }
 
   get layer() {
@@ -73,11 +103,33 @@ export default class Token {
     this[_sprite].rotation = (this[_token].rotation * Math.PI) / 180;
   }
 
+  label() {
+    if (!this[_token].label) {
+      this[_labelText].text = "";
+      this[_label].visible = false;
+      return;
+    }
+    this[_label].visible = true;
+    this[_labelText].text = this[_token].label;
+    this[_labelBackground].clear();
+    this[_labelBackground].beginFill(0x000000);
+    this[_labelBackground].drawRoundedRect(
+      -8,
+      -2,
+      this[_labelText].width + 16,
+      this[_labelText].height + 4,
+      10
+    );
+    this[_labelBackground].endFill();
+    this[_label].position.set(-(this[_labelText].width / 2), 25);
+  }
+
   set settings(settings) {
     this[_settings] = settings;
     this.move();
     this.resize();
     this.rotate();
+    this.label();
   }
 
   set token(token) {
@@ -85,5 +137,6 @@ export default class Token {
     this.move();
     this.resize();
     this.rotate();
+    this.label();
   }
 }
