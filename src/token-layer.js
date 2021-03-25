@@ -6,20 +6,15 @@ const _layer = Symbol("layer");
 const _sprite = Symbol("sprite");
 
 export default class Token {
-  constructor(settings, assets, { x, y, src, id, size, rotation, label }) {
+  constructor(settings, assets, token) {
     const {
       loader: { resources },
     } = assets;
     const xy = (i) => i * settings.cellsize - settings.cellsize;
     this.xy = xy;
 
-    this.x = x;
-    this.y = y;
-    this.src = src;
-    this.id = id;
-    this.size = size;
-    this.rotation = rotation;
-    this.label = label;
+    this.id = token.id;
+    this.token = token;
 
     this[_settings] = settings;
     this[_layer] = new Container();
@@ -33,14 +28,14 @@ export default class Token {
     this[_colorFilter].enabled = false;
     this[_colorFilter].hue(45);
 
-    const sprite = new Sprite(resources[src].texture);
+    const sprite = new Sprite(resources[token.src].texture);
     sprite.width = settings.cellsize;
     sprite.height = settings.cellsize;
     sprite.anchor.x = 0.5;
     sprite.anchor.y = 0.5;
     this[_sprite] = sprite;
 
-    this.move(x, y);
+    this.move(token.x, token.y);
 
     this[_layer].addChild(sprite);
   }
@@ -55,28 +50,16 @@ export default class Token {
   }
 
   select() {
-    this[_colorFilter].enabled = true;
+    // this[_colorFilter].enabled = true;
   }
 
   unselect() {
-    this[_colorFilter].enabled = false;
+    // this[_colorFilter].enabled = false;
   }
 
   move(x, y) {
     const xy = (i) => i * this[_settings].cellsize - this[_settings].cellsize;
     this[_layer].x = this[_settings].cellsize / 2 + xy(x);
     this[_layer].y = this[_settings].cellsize / 2 + xy(y);
-  }
-
-  toJSON() {
-    return {
-      id: this.id,
-      x: this.x,
-      y: this.y,
-      src: this.src,
-      size: this.size,
-      rotation: this.rotation,
-      label: this.label,
-    };
   }
 }

@@ -1,5 +1,4 @@
 import { Container } from "pixi.js";
-import Token from "./token.js";
 
 export default class TokenCollection {
   constructor(state) {

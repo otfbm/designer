@@ -3,7 +3,7 @@ import { Viewport } from "pixi-viewport";
 import keyboard from "./keyboard.js";
 import Grid from "./grid.js";
 import Background from "./background.js";
-import Token from "./token.js";
+import TokenLayer from "./token-layer.js";
 import TokenCollection from "./token-collection.js";
 import GameAssets from "./game-assets.js";
 
@@ -209,13 +209,13 @@ export default class TableTop {
 
     this.state.on("state:tokens:add", (token) => {
       this.layers.tokens.add(
-        new Token(this.state.settings, this.assetLoader, token)
+        new TokenLayer(this.state.settings, this.assetLoader, token)
       );
     });
 
     this.state.on("state:tokens:update", (token) => {
-      const t = this.layers.tokens.get(token.id);
-      t.move(token.x, token.y);
+      const tokenLayer = this.layers.tokens.get(token.id);
+      tokenLayer.move(token.x, token.y);
     });
 
     this.state.on("state:tokens:remove", (token) => {

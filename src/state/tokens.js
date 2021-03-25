@@ -1,3 +1,5 @@
+import Token from "../data/token";
+
 const _events = Symbol("events");
 const _adapter = Symbol("events");
 
@@ -18,7 +20,8 @@ export default class Tokens extends Map {
     this[_adapter] = adapter;
   }
 
-  add(token) {
+  add(data) {
+    const token = new Token(data);
     token.id = uuidv4();
     this.set(token.id, token);
     this[_events].emit("state:tokens:add", token);
@@ -26,8 +29,9 @@ export default class Tokens extends Map {
     return this;
   }
 
-  remove(token) {
-    if (this.has(token.id)) {
+  remove(data) {
+    if (this.has(data.id)) {
+      const token = this.get(data.id);
       this.deselect(token);
       const success = this.delete(token.id);
       if (success) {
@@ -42,18 +46,19 @@ export default class Tokens extends Map {
     return false;
   }
 
-  update(token) {
-    this.set(token.id, { ...this.get(token.id), ...token });
+  update(data) {
+    const token = this.get(data.id);
+    this.set(token.id, { ...token, ...data });
     this[_events].emit("state:tokens:update", this.get(token.id));
     this[_adapter].set(`${this.id}:state:tokens`, Array.from(this.entries()));
     return this;
   }
 
-  select(token) {
-    this[_events].emit("state:tokens:select", this.get(token.id));
+  select(data) {
+    this[_events].emit("state:tokens:select", this.get(data.id));
   }
 
-  deselect(token) {
-    this[_events].emit("state:tokens:deselect", this.get(token.id));
+  deselect(data) {
+    this[_events].emit("state:tokens:deselect", this.get(data.id));
   }
 }

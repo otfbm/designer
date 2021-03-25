@@ -46424,21 +46424,16 @@ const _colorFilter = Symbol("colorFilter");
 const _layer = Symbol("layer");
 const _sprite = Symbol("sprite");
 
-class Token$1 {
-  constructor(settings, assets, { x, y, src, id, size, rotation, label }) {
+class Token$2 {
+  constructor(settings, assets, token) {
     const {
       loader: { resources },
     } = assets;
     const xy = (i) => i * settings.cellsize - settings.cellsize;
     this.xy = xy;
 
-    this.x = x;
-    this.y = y;
-    this.src = src;
-    this.id = id;
-    this.size = size;
-    this.rotation = rotation;
-    this.label = label;
+    this.id = token.id;
+    this.token = token;
 
     this[_settings] = settings;
     this[_layer] = new Container();
@@ -46452,14 +46447,14 @@ class Token$1 {
     this[_colorFilter].enabled = false;
     this[_colorFilter].hue(45);
 
-    const sprite = new Sprite(resources[src].texture);
+    const sprite = new Sprite(resources[token.src].texture);
     sprite.width = settings.cellsize;
     sprite.height = settings.cellsize;
     sprite.anchor.x = 0.5;
     sprite.anchor.y = 0.5;
     this[_sprite] = sprite;
 
-    this.move(x, y);
+    this.move(token.x, token.y);
 
     this[_layer].addChild(sprite);
   }
@@ -46474,29 +46469,17 @@ class Token$1 {
   }
 
   select() {
-    this[_colorFilter].enabled = true;
+    // this[_colorFilter].enabled = true;
   }
 
   unselect() {
-    this[_colorFilter].enabled = false;
+    // this[_colorFilter].enabled = false;
   }
 
   move(x, y) {
     const xy = (i) => i * this[_settings].cellsize - this[_settings].cellsize;
     this[_layer].x = this[_settings].cellsize / 2 + xy(x);
     this[_layer].y = this[_settings].cellsize / 2 + xy(y);
-  }
-
-  toJSON() {
-    return {
-      id: this.id,
-      x: this.x,
-      y: this.y,
-      src: this.src,
-      size: this.size,
-      rotation: this.rotation,
-      label: this.label,
-    };
   }
 }
 
@@ -46758,13 +46741,13 @@ class TableTop {
 
     this.state.on("state:tokens:add", (token) => {
       this.layers.tokens.add(
-        new Token$1(this.state.settings, this.assetLoader, token)
+        new Token$2(this.state.settings, this.assetLoader, token)
       );
     });
 
     this.state.on("state:tokens:update", (token) => {
-      const t = this.layers.tokens.get(token.id);
-      t.move(token.x, token.y);
+      const tokenLayer = this.layers.tokens.get(token.id);
+      tokenLayer.move(token.x, token.y);
     });
 
     this.state.on("state:tokens:remove", (token) => {
@@ -46777,7 +46760,7 @@ class TableTop {
 
 const html$9 = htm.bind(a);
 
-class Token extends p$1 {
+class Token$1 extends p$1 {
   render(props) {
     const { src, select } = props;
 
@@ -46826,7 +46809,7 @@ class SideBar extends p$1 {
         <ul>
           ${tokens.map(
             (token) =>
-              html$8`<${Token}
+              html$8`<${Token$1}
                 src="${token}"
                 select="${() => {
                   gainFocus();
@@ -47471,6 +47454,18 @@ class Settings {
   }
 }
 
+class Token {
+  constructor(data = {}) {
+    this.id = data.id || null;
+    this.src = data.src || "";
+    this.size = data.size || 1;
+    this.rotation = data.rotation || 0;
+    this.x = data.x || null;
+    this.y = data.y || null;
+    this.label = data.label || "";
+  }
+}
+
 const _events = Symbol("events");
 const _adapter = Symbol("events");
 
@@ -47491,7 +47486,8 @@ class Tokens extends Map {
     this[_adapter] = adapter;
   }
 
-  add(token) {
+  add(data) {
+    const token = new Token(data);
     token.id = uuidv4();
     this.set(token.id, token);
     this[_events].emit("state:tokens:add", token);
@@ -47499,8 +47495,9 @@ class Tokens extends Map {
     return this;
   }
 
-  remove(token) {
-    if (this.has(token.id)) {
+  remove(data) {
+    if (this.has(data.id)) {
+      const token = this.get(data.id);
       this.deselect(token);
       const success = this.delete(token.id);
       if (success) {
@@ -47515,19 +47512,20 @@ class Tokens extends Map {
     return false;
   }
 
-  update(token) {
-    this.set(token.id, { ...this.get(token.id), ...token });
+  update(data) {
+    const token = this.get(data.id);
+    this.set(token.id, { ...token, ...data });
     this[_events].emit("state:tokens:update", this.get(token.id));
     this[_adapter].set(`${this.id}:state:tokens`, Array.from(this.entries()));
     return this;
   }
 
-  select(token) {
-    this[_events].emit("state:tokens:select", this.get(token.id));
+  select(data) {
+    this[_events].emit("state:tokens:select", this.get(data.id));
   }
 
-  deselect(token) {
-    this[_events].emit("state:tokens:deselect", this.get(token.id));
+  deselect(data) {
+    this[_events].emit("state:tokens:deselect", this.get(data.id));
   }
 }
 
