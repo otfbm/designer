@@ -1,5 +1,6 @@
 export default class Background {
-  constructor() {
+  constructor(boardId) {
+    this.boardId = boardId;
     this.src = "";
   }
 

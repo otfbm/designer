@@ -1,5 +1,6 @@
 export default class Settings {
-  constructor() {
+  constructor(boardId) {
+    this.boardId = boardId;
     this.name = "";
     this.width = 10;
     this.height = 10;

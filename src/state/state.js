@@ -18,10 +18,10 @@ export default class State {
   constructor(id) {
     this.id = id;
     this[events] = new EventEmitter();
-    this[indexDBAdapter] = new IndexDBAdapter(`atlas:${id}`);
-    this[settings] = new Settings();
+    this[indexDBAdapter] = new IndexDBAdapter(`eldritch-atlas`, 1);
+    this[settings] = new Settings(id);
     this[_tokens] = new Tokens(id, this[events], this[indexDBAdapter]);
-    this[background] = new Background();
+    this[background] = new Background(id);
   }
 
   on(event, handler) {
@@ -40,7 +40,7 @@ export default class State {
     const changed = this[background].set(value);
     if (changed) {
       this[events].emit("state:background:update", this[background]);
-      this[indexDBAdapter].set(`backgrounds`, "background", this[background]);
+      this[indexDBAdapter].set(`backgrounds`, this[background]);
     }
   }
 
@@ -55,6 +55,7 @@ export default class State {
       );
     }
     const validValues = [
+      "boardId",
       "name",
       "width",
       "height",
@@ -76,19 +77,19 @@ export default class State {
     const changed = this[settings].set(values);
     if (changed) {
       this[events].emit("state:settings:update", this.settings);
-      this[indexDBAdapter].set(`settings`, "settings", this.settings);
+      this[indexDBAdapter].set(`settings`, this.settings);
     }
   }
 
   async load() {
-    this.background = await this[indexDBAdapter].get(
-      `backgrounds`,
-      "background"
-    );
-    this.settings =
-      (await this[indexDBAdapter].get(`settings`, "settings")) || {};
+    this.background = await this[indexDBAdapter].get(`backgrounds`, this.id);
+    this.settings = (await this[indexDBAdapter].get(`settings`, this.id)) || {};
 
-    const tokens = await this[indexDBAdapter].getAll("tokens");
+    const tokens = await this[indexDBAdapter].getAll(
+      "tokens",
+      "boardId",
+      this.id
+    );
     if (tokens) {
       for (const value of tokens) {
         this[_tokens].add(value);

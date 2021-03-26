@@ -6,9 +6,16 @@ export default class IndexDBAdapter {
     this.version = version;
     this.db = openDB(this.name, this.version, {
       upgrade(db) {
-        db.createObjectStore("tokens");
-        db.createObjectStore("settings");
-        db.createObjectStore("backgrounds");
+        const tokensStore = db.createObjectStore("tokens", {
+          keyPath: "id",
+        });
+        tokensStore.createIndex("boardId", "boardId", { unique: false });
+        db.createObjectStore("settings", {
+          keyPath: "boardId",
+        });
+        db.createObjectStore("backgrounds", {
+          keyPath: "boardId",
+        });
       },
     });
   }
@@ -16,16 +23,17 @@ export default class IndexDBAdapter {
     const db = await this.db;
     return db.add(store, value);
   }
-  async set(store, key, value) {
+  async set(store, value) {
     const db = await this.db;
-    return db.put(store, value, key);
+    return db.put(store, value);
   }
   async get(store, key) {
     const db = await this.db;
     return db.get(store, key);
   }
-  async getAll(store, query = null, count = null) {
+  async getAll(store, index, value) {
     const db = await this.db;
+    if (index && value) return db.getAllFromIndex(store, index, value);
     return db.getAll(store, query, count);
   }
   async delete(store, key) {

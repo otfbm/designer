@@ -13,23 +13,23 @@ function uuidv4() {
 }
 
 export default class Tokens extends Map {
-  constructor(id, events, adapter) {
+  constructor(boardId, events, adapter) {
     super();
-    this.id = id;
+    this.id = boardId;
     this[_events] = events;
     this[_adapter] = adapter;
   }
 
   add(data) {
-    const token = new Token(data);
+    const token = new Token({ boardId: this.id, ...data });
     this.set(token.id, token);
     this[_events].emit("state:tokens:add", token);
   }
 
   async create(data) {
     const id = uuidv4();
-    const tdata = { id, ...data };
-    await this[_adapter].set("tokens", id, tdata);
+    const tdata = { id, boardId: this.id, ...data };
+    await this[_adapter].set("tokens", tdata);
     const token = new Token(tdata);
     this.set(token.id, token);
     this[_events].emit("state:tokens:add", token);
@@ -54,7 +54,7 @@ export default class Tokens extends Map {
     const token = this.get(data.id);
     this.set(token.id, { ...token, ...data });
     this[_events].emit("state:tokens:update", this.get(token.id));
-    await this[_adapter].set(`tokens`, token.id, this.get(token.id));
+    await this[_adapter].set(`tokens`, this.get(token.id));
   }
 
   select(data) {
