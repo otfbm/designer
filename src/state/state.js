@@ -1,17 +1,13 @@
 import Settings from "./settings.js";
 import Tokens from "./tokens.js";
 import Background from "./background.js";
-// import LocalStorageAdapter from "./adapters/local-storage.js";
 import IndexDBAdapter from "./adapters/index-db.js";
-// import HttpAdapter from "./adapters/http.js";
 import EventEmitter from "eventemitter3";
 
 const events = Symbol("events");
 const settings = Symbol("settings");
 const _tokens = Symbol("_tokens");
 const background = Symbol("background");
-// const localStorageAdapter = Symbol("localStorageAdapter");
-// const httpAdapter = Symbol("httpAdapter");
 const indexDBAdapter = Symbol("indexDBAdapter");
 
 export default class State {
