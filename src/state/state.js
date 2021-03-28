@@ -40,6 +40,15 @@ export default class State {
     }
   }
 
+  set updateReady(value) {
+    if (value && typeof value === "boolean" && this.updateReady !== value) {
+      this.updateReady = value;
+      if (value === true) {
+        this[events].emit("state:updateReady");
+      }
+    }
+  }
+
   get settings() {
     return this[settings];
   }

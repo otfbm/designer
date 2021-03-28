@@ -18,12 +18,12 @@ export default class Assets {
       "backgrounds/grass-rock.jpeg",
     ];
     this.tokens = [
-      "token_144.png",
-      "token_150.png",
-      "token_146.png",
-      "token_137.png",
-      "token_134.png",
-      "token_133.png",
+      "tokens/token_144.png",
+      "tokens/token_150.png",
+      "tokens/token_146.png",
+      "tokens/token_137.png",
+      "tokens/token_134.png",
+      "tokens/token_133.png",
     ];
   }
 }
