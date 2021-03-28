@@ -53,7 +53,7 @@ export default class State {
     return this[settings];
   }
 
-  set settings(values) {
+  set settings(values = null) {
     if (typeof values === "string" || typeof values === "number") {
       throw new Error(
         `Invalid settings. Expected object with valid keys, got "${values}"`
@@ -70,7 +70,7 @@ export default class State {
       "gridTransparency",
       "gridColor",
     ];
-    for (const key of Object.keys(values)) {
+    for (const key of Object.keys(values || {})) {
       if (!validValues.includes(key)) {
         throw new Error(
           `Invalid setting "${key}" specified when updating settings. Can only be one of ${JSON.stringify(
@@ -79,6 +79,7 @@ export default class State {
         );
       }
     }
+
     const changed = this[settings].set(values);
     if (changed) {
       this[events].emit("state:settings:update", this.settings);
@@ -88,7 +89,7 @@ export default class State {
 
   async load() {
     this.background = await this[indexDBAdapter].get(`backgrounds`, this.id);
-    this.settings = (await this[indexDBAdapter].get(`settings`, this.id)) || {};
+    this.settings = await this[indexDBAdapter].get(`settings`, this.id);
 
     const tokens = await this[indexDBAdapter].getAll(
       "tokens",

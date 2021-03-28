@@ -1,14 +1,17 @@
+const defaults = {
+  NAME: "",
+  WIDTH: 10,
+  HEIGHT: 10,
+  CELLSIZE: 50,
+  RESOLUTION: 1,
+  BACKGROUND_COLOR: "8f8f8f",
+  GRID_TRANSPARENCY: 1,
+  GRID_COLOR: "ffffff",
+};
+
 export default class Settings {
   constructor(boardId) {
     this.boardId = boardId;
-    this.name = "";
-    this.width = 10;
-    this.height = 10;
-    this.cellsize = 50;
-    this.resolution = 1;
-    this.backgroundColor = "8f8f8f";
-    this.gridTransparency = 1;
-    this.gridColor = "ffffff";
   }
 
   get widthPx() {
@@ -19,17 +22,30 @@ export default class Settings {
     return parseInt(this.height * this.cellsize, 10);
   }
 
-  set({
-    name,
-    width,
-    height,
-    cellsize,
-    resolution,
-    backgroundColor,
-    gridTransparency,
-    gridColor,
-  } = {}) {
+  set(values = null) {
+    if (values == null) {
+      this.name = defaults.NAME;
+      this.width = defaults.WIDTH;
+      this.height = defaults.HEIGHT;
+      this.cellsize = defaults.CELLSIZE;
+      this.resolution = defaults.RESOLUTION;
+      this.backgroundColor = defaults.BACKGROUND_COLOR;
+      this.gridTransparency = defaults.GRID_TRANSPARENCY;
+      this.gridColor = defaults.GRID_COLOR;
+      return true;
+    }
+
     let changes = false;
+    const {
+      name,
+      width,
+      height,
+      cellsize,
+      resolution,
+      backgroundColor,
+      gridTransparency,
+      gridColor,
+    } = values;
 
     if (name && name !== this.name) {
       this.name = name;
