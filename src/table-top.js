@@ -6,6 +6,7 @@ import Background from "./background.js";
 import TokenLayer from "./token-layer.js";
 import TokenCollection from "./token-collection.js";
 import GameAssets from "./game-assets.js";
+import TokenDragAndDrop from "./token-drag-and-drop.js";
 
 export default class TableTop {
   constructor({ assets, state }) {
@@ -85,41 +86,13 @@ export default class TableTop {
     // this.app.ticker.add(() => {
     //   // animation stuff
     // });
-    this.drag = false;
-    this.dragTarget = null;
-
-    this.viewport.on("mousedown", this.handleDragStart.bind(this));
-    this.viewport.on("touchstart", this.handleDragStart.bind(this));
-
-    this.viewport.on("mousemove", this.handleDrag.bind(this));
-    this.viewport.on("touchmove", this.handleDrag.bind(this));
-
-    this.viewport.on("mouseup", this.handleDragEnd.bind(this));
-    this.viewport.on("touchend", this.handleDragEnd.bind(this));
 
     this.viewport.on("click", this.handleClick.bind(this));
 
+    const dd = new TokenDragAndDrop(this.layers.tokens, this.state);
+    dd.enable(this.viewport);
+
     document.getElementById("canvas").appendChild(this.app.view);
-  }
-
-  handleDragStart(e) {
-    if (e.target && e.target.type === "token") {
-      this.drag = true;
-      const token = this.layers.tokens.get(e.target.id);
-      this.dragTarget = token;
-      token.layer.parent.parent.pause = true;
-    }
-  }
-
-  handleDrag(e) {
-    if (this.drag && this.dragTarget) {
-      this.dragTarget.layer.position.x = e.data.getLocalPosition(
-        this.dragTarget.layer.parent
-      ).x;
-      this.dragTarget.layer.position.y = e.data.getLocalPosition(
-        this.dragTarget.layer.parent
-      ).y;
-    }
   }
 
   handleClick(e) {
@@ -134,24 +107,6 @@ export default class TableTop {
       this.selectedToken = token;
       token.select();
       this.state.tokens.select(token);
-    }
-  }
-
-  handleDragEnd(e) {
-    if (this.drag && this.dragTarget) {
-      const pos = e.data.getLocalPosition(this.dragTarget.layer.parent);
-      const closestCellX = Math.ceil(pos.x / this.state.settings.cellsize);
-      const closestCellY = Math.ceil(pos.y / this.state.settings.cellsize);
-
-      this.state.tokens.update({
-        id: this.dragTarget.id,
-        x: closestCellX,
-        y: closestCellY,
-      });
-
-      this.dragTarget.layer.parent.parent.pause = false;
-      this.drag = false;
-      this.dragTarget = null;
     }
   }
 
