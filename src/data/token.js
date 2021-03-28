@@ -9,4 +9,17 @@ export default class Token {
     this.y = data.y || null;
     this.label = data.label || "";
   }
+
+  height(cellsize) {
+    return this.size * cellsize;
+  }
+
+  width(cellsize) {
+    return this.size * cellsize;
+  }
+
+  center(cellsize) {
+    const xy = (this.size * cellsize) / 2;
+    return [x, y];
+  }
 }

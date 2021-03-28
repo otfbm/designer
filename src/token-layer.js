@@ -121,7 +121,11 @@ export default class Token {
       10
     );
     this[_labelBackground].endFill();
-    this[_label].position.set(-(this[_labelText].width / 2), 25);
+
+    const labelHeight = 18 + 4;
+    const heightOffset =
+      this[_token].height(this[_settings].cellsize) / 2 - labelHeight;
+    this[_label].position.set(-(this[_labelText].width / 2), heightOffset);
   }
 
   set settings(settings) {

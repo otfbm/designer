@@ -52,7 +52,7 @@ export default class Tokens extends Map {
 
   async update(data) {
     const token = this.get(data.id);
-    this.set(token.id, { ...token, ...data });
+    this.set(token.id, new Token({ ...token, ...data }));
     this[_events].emit("state:tokens:update", this.get(token.id));
     await this[_adapter].set(`tokens`, this.get(token.id));
   }
