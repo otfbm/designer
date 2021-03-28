@@ -8,6 +8,19 @@ const _sprite = Symbol("sprite");
 const _label = Symbol("label");
 const _labelBackground = Symbol("labelBackground");
 const _labelText = Symbol("labelText");
+const _labelTextStyle = Symbol("labelTextStyle");
+
+const fontSize = (cellsize) => {
+  if (cellsize <= 30) return 8;
+  if (cellsize <= 40) return 10;
+  if (cellsize <= 50) return 12;
+  if (cellsize <= 60) return 14;
+  if (cellsize <= 70) return 16;
+  if (cellsize <= 80) return 18;
+  if (cellsize <= 90) return 20;
+  if (cellsize <= 100) return 22;
+  if (cellsize > 100) return 24;
+};
 
 export default class Token {
   constructor(settings, assets, token) {
@@ -55,6 +68,7 @@ export default class Token {
       // dropShadowAngle: Math.PI / 6,
       // dropShadowDistance: 6,
     });
+    this[_labelTextStyle] = style;
     const label = new Container();
     this[_label] = label;
     this[_labelBackground] = new Graphics();
@@ -110,6 +124,7 @@ export default class Token {
       return;
     }
     this[_label].visible = true;
+    this[_labelTextStyle].fontSize = fontSize(this[_settings].cellsize);
     this[_labelText].text = this[_token].label;
     this[_labelBackground].clear();
     this[_labelBackground].beginFill(0x000000);
@@ -122,7 +137,7 @@ export default class Token {
     );
     this[_labelBackground].endFill();
 
-    const labelHeight = 18 + 4;
+    const labelHeight = fontSize(this[_settings].cellsize) + 4;
     const heightOffset =
       this[_token].height(this[_settings].cellsize) / 2 - labelHeight;
     this[_label].position.set(-(this[_labelText].width / 2), heightOffset);
