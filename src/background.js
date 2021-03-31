@@ -6,14 +6,22 @@ export default class Background {
     this.layer = new Container();
   }
 
-  set(src) {
+  setImage(src) {
     this.src = src;
     this.layer.removeChild(this.sprite);
     if (src) {
       this.sprite = new Sprite(this.assets.resources[src].texture);
       this.layer.addChild(this.sprite);
-      this.layer.x = 0;
-      this.layer.y = 0;
+    }
+  }
+
+  setOffset(x = 0, y = 0) {
+    if (x) {
+      this.layer.x = x;
+    }
+
+    if (y) {
+      this.layer.y = y;
     }
   }
 }

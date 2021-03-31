@@ -9,5 +9,7 @@ export default class Settings {
     this.backgroundColor = data.backgroundColor;
     this.gridTransparency = data.gridTransparency;
     this.gridColor = data.gridColor;
+    this.backgroundOffsetX = data.backgroundOffsetX;
+    this.backgroundOffsetY = data.backgroundOffsetY;
   }
 }

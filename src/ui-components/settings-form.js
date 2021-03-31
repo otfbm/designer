@@ -33,6 +33,8 @@ class SettingsForm extends Component {
       backgroundColor,
       gridTransparency,
       gridColor,
+      backgroundOffsetX,
+      backgroundOffsetY,
     } = state;
     return html`<${ModalHeader} close=${props.close}>Settings<//>
       <div class="p-8 overflow-auto">
@@ -157,6 +159,31 @@ class SettingsForm extends Component {
                     name="gridColor"
                     type="string"
                     value=${gridColor}
+                    onInput=${this.onInput}
+                  />
+                </div>
+
+                <div class="flex flex-col mb-4">
+                  <label
+                    class="mb-2 uppercase font-bold text-sm text-grey-darkest"
+                    for="gridColor"
+                    >Background Offset</label
+                  >
+                  x:
+                  <input
+                    class="border py-2 px-3 text-grey-darkest"
+                    name="backgroundOffsetX"
+                    type="number"
+                    value=${backgroundOffsetX}
+                    onInput=${this.onInput}
+                  />
+
+                  y:
+                  <input
+                    class="border py-2 px-3 text-grey-darkest"
+                    name="backgroundOffsetY"
+                    type="number"
+                    value=${backgroundOffsetY}
                     onInput=${this.onInput}
                   />
                 </div>

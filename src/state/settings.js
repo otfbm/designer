@@ -7,6 +7,8 @@ const defaults = {
   BACKGROUND_COLOR: "8f8f8f",
   GRID_TRANSPARENCY: 1,
   GRID_COLOR: "ffffff",
+  BACKGROUND_OFFSET_X: 0,
+  BACKGROUND_OFFSET_Y: 0,
 };
 
 export default class Settings {
@@ -32,6 +34,8 @@ export default class Settings {
       this.backgroundColor = defaults.BACKGROUND_COLOR;
       this.gridTransparency = defaults.GRID_TRANSPARENCY;
       this.gridColor = defaults.GRID_COLOR;
+      this.backgroundOffsetX = defaults.BACKGROUND_OFFSET_X;
+      this.backgroundOffsetY = defaults.BACKGROUND_OFFSET_Y;
       return true;
     }
 
@@ -45,6 +49,8 @@ export default class Settings {
       backgroundColor,
       gridTransparency,
       gridColor,
+      backgroundOffsetX,
+      backgroundOffsetY,
     } = values;
 
     if (name && name !== this.name) {
@@ -84,6 +90,16 @@ export default class Settings {
 
     if (gridColor && gridColor !== this.gridColor) {
       this.gridColor = gridColor;
+      changes = true;
+    }
+
+    if (backgroundOffsetX && backgroundOffsetX !== this.backgroundOffsetX) {
+      this.backgroundOffsetX = backgroundOffsetX;
+      changes = true;
+    }
+
+    if (backgroundOffsetY && backgroundOffsetY !== this.backgroundOffsetY) {
+      this.backgroundOffsetY = backgroundOffsetY;
       changes = true;
     }
 

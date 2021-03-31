@@ -138,7 +138,14 @@ export default class TableTop {
   }
 
   async setBackgroundImage(image) {
-    this.layers.background.set(image);
+    this.layers.background.setImage(image);
+  }
+
+  async setBackgroundOffset(settings) {
+    this.layers.background.setOffset(
+      settings.backgroundOffsetX,
+      settings.backgroundOffsetY
+    );
   }
 
   setScale(settings) {
@@ -160,6 +167,7 @@ export default class TableTop {
       this.setResolution(settings.resolution);
       this.setGridlines(settings);
       this.setScale(settings);
+      this.setBackgroundOffset(settings);
     });
 
     this.state.on("state:tokens:add", (token) => {

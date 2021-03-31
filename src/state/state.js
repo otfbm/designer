@@ -73,6 +73,8 @@ export default class State {
       "backgroundColor",
       "gridTransparency",
       "gridColor",
+      "backgroundOffsetX",
+      "backgroundOffsetY",
     ];
     for (const key of Object.keys(values || {})) {
       if (!validValues.includes(key)) {
