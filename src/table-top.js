@@ -29,7 +29,6 @@ export default class TableTop {
 
     this.app.stage.addChild(this.viewport);
     this.assetLoader = new GameAssets();
-    console.log(assets.backgrounds);
     this.assetLoader.add(assets.tokens.map((t) => t.src));
     this.assetLoader.add(assets.backgrounds.map((b) => b.src));
 
