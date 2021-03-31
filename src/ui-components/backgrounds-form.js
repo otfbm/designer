@@ -48,7 +48,7 @@ class BackgroundsForm extends Component {
                       background
                         ? " border-indigo-600"
                         : ""}"
-                      src="${background}"
+                      src="${background.src}"
                     />
                   </div>`
               )}

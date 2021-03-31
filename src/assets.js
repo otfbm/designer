@@ -4,26 +4,22 @@ export default class Assets {
     this.backgrounds = [];
   }
 
+  async fetchBackgrounds() {
+    const response = await fetch("http://localhost:8081/users/1/backgrounds");
+    return response.json();
+  }
+
+  async fetchTokens() {
+    const response = await fetch("http://localhost:8081/users/1/tokens");
+    return response.json();
+  }
+
   async load() {
-    this.backgrounds = [
-      "backgrounds/grass-grid.jpg",
-      "backgrounds/sand-grid.jpg",
-      "backgrounds/stone-grid.jpg",
-      "backgrounds/water-grid.jpg",
-      "backgrounds/wood-grid.jpg",
-      "backgrounds/falls.png",
-      "backgrounds/mines.jpg",
-      "backgrounds/grass-river.jpg",
-      "backgrounds/forge.jpg",
-      "backgrounds/grass-rock.jpeg",
-    ];
-    this.tokens = [
-      "tokens/token_144.png",
-      "tokens/token_150.png",
-      "tokens/token_146.png",
-      "tokens/token_137.png",
-      "tokens/token_134.png",
-      "tokens/token_133.png",
-    ];
+    const [backgrounds, tokens] = await Promise.all([
+      this.fetchBackgrounds(),
+      this.fetchTokens(),
+    ]);
+    this.backgrounds = backgrounds;
+    this.tokens = tokens;
   }
 }

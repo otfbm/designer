@@ -38,7 +38,7 @@ class SideBar extends Component {
           ${tokens.map(
             (token) =>
               html`<${Token}
-                src="${token}"
+                token="${token}"
                 select="${() => {
                   gainFocus();
                 }}"

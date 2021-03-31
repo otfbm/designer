@@ -1,0 +1,40 @@
+[
+  [
+    "123456",
+    {
+      "id": "123456",
+      "name": "Test Board 1",
+      "width": 28,
+      "height": 33,
+      "cellsize": 75,
+      "resolution": 1,
+      "backgroundColor": "000000",
+      "gridTransparency": 0.7,
+      "gridColor": "ffffff",
+      "background": {
+        "id": 9,
+        "userId": 1,
+        "src": "http://localhost:8080/backgrounds/forge.jpg"
+      }
+    }
+  ],
+  [
+    "123457",
+    {
+      "id": "123457",
+      "name": "Test Board 2",
+      "width": 30,
+      "height": 30,
+      "cellsize": 100,
+      "resolution": 1,
+      "backgroundColor": "000000",
+      "gridTransparency": 0.7,
+      "gridColor": "ffffff",
+      "background": {
+        "id": 7,
+        "userId": 1,
+        "src": "http://localhost:8080/backgrounds/mines.jpg"
+      }
+    }
+  ]
+]

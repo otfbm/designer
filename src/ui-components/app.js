@@ -32,7 +32,7 @@ class App extends Component {
   }
 
   selectBackground(background) {
-    this.props.worldState.background = { src: background };
+    this.props.worldState.background = background;
     this.setState({ show: false });
   }
 

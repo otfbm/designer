@@ -2,6 +2,7 @@ import Settings from "./settings.js";
 import Tokens from "./tokens.js";
 import Background from "./background.js";
 import IndexDBAdapter from "./adapters/index-db.js";
+import HttpAdapter from "./adapters/http.js";
 import EventEmitter from "eventemitter3";
 
 const events = Symbol("events");
@@ -9,12 +10,14 @@ const settings = Symbol("settings");
 const _tokens = Symbol("_tokens");
 const background = Symbol("background");
 const indexDBAdapter = Symbol("indexDBAdapter");
+const httpAdapter = Symbol("indexDBAdapter");
 
 export default class State {
   constructor(id) {
     this.id = id;
     this[events] = new EventEmitter();
     this[indexDBAdapter] = new IndexDBAdapter(`eldritch-atlas`, 1);
+    this[httpAdapter] = new HttpAdapter(`http://127.0.0.1:8081`, 1);
     this[settings] = new Settings(id);
     this[_tokens] = new Tokens(id, this[events], this[indexDBAdapter]);
     this[background] = new Background(id);
@@ -60,6 +63,7 @@ export default class State {
       );
     }
     const validValues = [
+      "id",
       "boardId",
       "name",
       "width",
@@ -89,7 +93,10 @@ export default class State {
 
   async load() {
     this.background = await this[indexDBAdapter].get(`backgrounds`, this.id);
+    this.background = await this[httpAdapter].get(`backgrounds`, this.id);
+
     this.settings = await this[indexDBAdapter].get(`settings`, this.id);
+    this.settings = await this[httpAdapter].get(`settings`, this.id);
 
     const tokens = await this[indexDBAdapter].getAll(
       "tokens",

@@ -7,6 +7,7 @@ export default class Background {
   }
 
   set(src) {
+    console.log(src, this.assets.resources);
     this.src = src;
     this.layer.removeChild(this.sprite);
     if (src) {
