@@ -15,6 +15,16 @@ const _backgrounds = Symbol("_backgrounds");
 const _userTokens = Symbol("_userTokens");
 // const httpAdapter = Symbol("indexDBAdapter");
 
+const convertBlobToBase64 = (blob) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.readAsDataURL(blob);
+  });
+
 export default class State {
   constructor(id) {
     this.id = id;
@@ -115,6 +125,11 @@ export default class State {
   }
 
   async addBackground(background) {
+    const bgURL = `https://bg.otfbm.io/${btoa(background.src)}`;
+    const result = await fetch(bgURL);
+    const blob = await result.blob();
+    const image = await convertBlobToBase64(blob);
+    background.src = `data:image/jpeg;base64,${image}`;
     this[_backgrounds].push(background);
     this[events].emit("state:backgrounds:update", this[_backgrounds]);
   }
