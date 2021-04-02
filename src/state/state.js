@@ -2,6 +2,7 @@ import Settings from "./settings.js";
 import Tokens from "./tokens.js";
 import Background from "./background.js";
 import IndexDBAdapter from "./adapters/index-db.js";
+import Assets from "./assets.js";
 // import HttpAdapter from "./adapters/http.js";
 import EventEmitter from "eventemitter3";
 
@@ -10,6 +11,8 @@ const settings = Symbol("settings");
 const _tokens = Symbol("_tokens");
 const background = Symbol("background");
 const indexDBAdapter = Symbol("indexDBAdapter");
+const _backgrounds = Symbol("_backgrounds");
+const _userTokens = Symbol("_userTokens");
 // const httpAdapter = Symbol("indexDBAdapter");
 
 export default class State {
@@ -21,6 +24,7 @@ export default class State {
     this[settings] = new Settings(id);
     this[_tokens] = new Tokens(id, this[events], this[indexDBAdapter]);
     this[background] = new Background(id);
+    this.assets = new Assets();
   }
 
   on(event, handler) {
@@ -33,6 +37,23 @@ export default class State {
 
   get background() {
     return this[background];
+  }
+
+  async setBackgrounds(backgrounds) {
+    this[_backgrounds] = backgrounds;
+    this[events].emit("state:backgrounds:update", this[_backgrounds]);
+  }
+
+  get backgrounds() {
+    return this[_backgrounds];
+  }
+
+  get userTokens() {
+    return this[_userTokens];
+  }
+
+  get backgrounds() {
+    return this[_backgrounds];
   }
 
   set background(value) {
@@ -93,11 +114,22 @@ export default class State {
     }
   }
 
+  async addBackground(background) {
+    this[_backgrounds].push(background);
+    this[events].emit("state:backgrounds:update", this[_backgrounds]);
+  }
+
   async load() {
-    this.background = await this[indexDBAdapter].get(`backgrounds`, this.id);
+    await this.assets.load();
+    this[_userTokens] = this.assets.tokens;
+    this[_backgrounds] = this.assets.backgrounds;
+    this[background].set(
+      await this[indexDBAdapter].get(`backgrounds`, this.id)
+    );
+    this[settings].set(await this[indexDBAdapter].get(`settings`, this.id));
     // this.background = await this[httpAdapter].get(`backgrounds`, this.id);
 
-    this.settings = await this[indexDBAdapter].get(`settings`, this.id);
+    // this.settings = await this[indexDBAdapter].get(`settings`, this.id);
     // this.settings = await this[httpAdapter].get(`settings`, this.id);
 
     const tokens = await this[indexDBAdapter].getAll(
@@ -107,14 +139,16 @@ export default class State {
     );
     if (tokens) {
       for (const value of tokens) {
-        this[_tokens].add(value);
+        this[_tokens].add(value, false);
       }
     }
 
     this[events].emit("state:load", {
-      tokens: this[_tokens],
+      tokens: Array.from(this[_tokens].values()),
       settings: this.settings,
       background: this.background,
+      backgrounds: this[_backgrounds],
+      userTokens: this[_userTokens],
     });
   }
 }

@@ -4,11 +4,12 @@ export default class Background {
   constructor(assets) {
     this.assets = assets;
     this.layer = new Container();
+    this.sprite = null;
   }
 
   setImage(src) {
     this.src = src;
-    this.layer.removeChild(this.sprite);
+    if (this.sprite) this.layer.removeChild(this.sprite);
     if (src) {
       this.sprite = new Sprite(this.assets.resources[src].texture);
       this.layer.addChild(this.sprite);

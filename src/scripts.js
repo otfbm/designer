@@ -2,7 +2,6 @@ import { h, render } from "preact";
 import htm from "htm";
 import TableTop from "./table-top.js";
 import App from "./ui-components/app.js";
-import Assets from "./assets.js";
 import State from "./state/state.js";
 import ServiceWorkerManager from "./service-worker-manager.js";
 
@@ -15,18 +14,14 @@ const main = async () => {
   if (!/^[a-z0-9]{6}$/.test(id))
     throw new Error(":id does not conform to expected url query param");
 
-  const assets = new Assets();
-  await assets.load();
-
   const state = new State(id);
 
-  const tabletop = new TableTop({ assets, state });
+  const tabletop = new TableTop({ state });
 
   ServiceWorkerManager.registerServiceWorker();
 
   render(
     html`<${App}
-      assets="${assets}"
       worldState="${state}"
       dropToken="${tabletop.createTokenAtCoords.bind(tabletop)}"
     />`,

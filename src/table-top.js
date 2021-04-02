@@ -10,7 +10,7 @@ import GameAssets from "./game-assets.js";
 import TokenDragAndDrop from "./token-drag-and-drop.js";
 
 export default class TableTop {
-  constructor({ assets, state }) {
+  constructor({ state }) {
     this.app = new App({
       // width: 100,         // default: 800
       // height: 100,        // default: 600
@@ -30,12 +30,11 @@ export default class TableTop {
 
     this.app.stage.addChild(this.viewport);
     this.assetLoader = new GameAssets();
-    this.assetLoader.add(assets.tokens.map((t) => t.src));
-    this.assetLoader.add(assets.backgrounds.map((b) => b.src));
 
     this.selectedToken = null;
 
     this.state = state;
+    state.assetLoader = this.assetLoader;
 
     this.layers = {
       background: new Background(this.assetLoader),
@@ -145,6 +144,10 @@ export default class TableTop {
   }
 
   async setBackgroundImage(image) {
+    if (image && !this.assetLoader.has(image)) {
+      this.assetLoader.add(image);
+      await this.assetLoader.load();
+    }
     this.layers.background.setImage(image);
   }
 
@@ -162,37 +165,83 @@ export default class TableTop {
     this.viewport.fitWidth(settings.widthPx, true);
   }
 
+  updateSettings(settings) {
+    this.setBackgroundColor(settings.backgroundColor);
+    this.setResolution(settings.resolution);
+    this.setGridlines(settings);
+    this.setScale(settings);
+    this.setBackgroundOffset(settings);
+    this.setAxis(settings);
+  }
+
+  addToken(token, settings) {
+    this.layers.tokens.add(new TokenLayer(settings, this.assetLoader, token));
+  }
+
+  addTokens(tokens, settings) {
+    for (const token of tokens) {
+      this.layers.tokens.add(new TokenLayer(settings, this.assetLoader, token));
+    }
+  }
+
+  updateToken(token) {
+    const tokenLayer = this.layers.tokens.get(token.id);
+    tokenLayer.token = token;
+  }
+
+  removeToken(token) {
+    this.layers.tokens.remove(token);
+  }
+
+  loadBackgroundAssets(backgrounds) {
+    for (const background of backgrounds) {
+      if (!this.assetLoader.has(background.src)) {
+        this.assetLoader.add(background.src);
+      }
+    }
+  }
+
+  loadTokenAssets(tokens) {
+    for (const token of tokens) {
+      if (!this.assetLoader.has(token.src)) {
+        this.assetLoader.add(token.src);
+      }
+    }
+  }
+
   async run() {
-    await this.assetLoader.load();
+    this.state.on(
+      "state:load",
+      async ({ tokens, settings, background, backgrounds, userTokens }) => {
+        this.loadBackgroundAssets(backgrounds);
+        this.loadTokenAssets(userTokens);
+        await this.assetLoader.load();
 
-    this.state.on("state:background:update", (background) => {
-      this.setBackgroundImage(background.src);
-    });
+        this.setBackgroundImage(background.src);
+        this.state.on("state:background:update", async (bg) => {
+          this.setBackgroundImage(bg.src);
+        });
 
-    this.state.on("state:settings:update", (settings) => {
-      this.setBackgroundColor(settings.backgroundColor);
-      this.setResolution(settings.resolution);
-      this.setGridlines(settings);
-      this.setScale(settings);
-      this.setBackgroundOffset(settings);
-      this.setAxis(settings);
-    });
+        this.updateSettings(settings);
+        this.state.on("state:settings:update", (settings) => {
+          this.updateSettings(settings);
+        });
 
-    this.state.on("state:tokens:add", (token) => {
-      this.layers.tokens.add(
-        new TokenLayer(this.state.settings, this.assetLoader, token)
-      );
-    });
+        this.addTokens(tokens, settings);
+        this.state.on("state:tokens:add", (token) => {
+          this.addToken(token, settings);
+        });
 
-    this.state.on("state:tokens:update", (token) => {
-      const tokenLayer = this.layers.tokens.get(token.id);
-      tokenLayer.token = token;
-    });
+        this.state.on("state:tokens:update", (token) => {
+          this.updateToken(token);
+        });
 
-    this.state.on("state:tokens:remove", (token) => {
-      this.layers.tokens.remove(token);
-    });
+        this.state.on("state:tokens:remove", (token) => {
+          this.removeToken(token);
+        });
 
-    this.viewport.addChild(this.layers.tokens.layer);
+        this.viewport.addChild(this.layers.tokens.layer);
+      }
+    );
   }
 }

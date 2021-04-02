@@ -20,10 +20,10 @@ export default class Tokens extends Map {
     this[_adapter] = adapter;
   }
 
-  add(data) {
+  add(data, emit = true) {
     const token = new Token({ boardId: this.id, ...data });
     this.set(token.id, token);
-    this[_events].emit("state:tokens:add", token);
+    if (emit) this[_events].emit("state:tokens:add", token);
   }
 
   async create(data) {

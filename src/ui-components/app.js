@@ -19,6 +19,8 @@ class App extends Component {
       settings: props.worldState.settings,
       showSettings: false,
       modalTitle: "",
+      backgrounds: [],
+      userTokens: [],
     };
     this.dragDrop = new DragDrop(this.tokenDrop.bind(this));
   }
@@ -29,6 +31,10 @@ class App extends Component {
       y,
       src,
     });
+  }
+
+  addNewBackground(background) {
+    this.props.worldState.addBackground(background);
   }
 
   selectBackground(background) {
@@ -45,6 +51,18 @@ class App extends Component {
   }
 
   componentDidMount() {
+    this.props.worldState.on(
+      "state:load",
+      ({ settings, backgrounds, userTokens }) => {
+        this.setState({ backgrounds, userTokens, settings });
+      }
+    );
+    this.props.worldState.on("state:backgrounds:update", (backgrounds) => {
+      this.setState({ backgrounds });
+    });
+    this.props.worldState.on("state:userTokens:update", (userTokens) => {
+      this.setState({ userTokens });
+    });
     this.props.worldState.on("state:settings:update", (settings) => {
       this.setState({ settings });
     });
@@ -58,6 +76,9 @@ class App extends Component {
   }
 
   componentWillUnmount() {
+    this.props.worldState.off("state:load");
+    this.props.worldState.off("state:backgrounds:update");
+    this.props.worldState.off("state:userTokens:update");
     this.props.worldState.off("state:settings:update");
     this.props.worldState.off("state:tokens:select");
     this.props.worldState.off("state:tokens:deselect");
@@ -69,10 +90,10 @@ class App extends Component {
   }
 
   render(props, state) {
-    const { selectedToken = {} } = this.state;
+    const { selectedToken = {}, userTokens } = this.state;
     return html`
       <${SideBar}
-        tokens="${props.assets.tokens}"
+        tokens="${userTokens}"
         openSettings="${() =>
           this.setState({
             show: true,
@@ -99,8 +120,9 @@ class App extends Component {
           : html``}
         ${state.showBackgrounds
           ? html`<${BackgroundsForm}
+              newBackground="${this.addNewBackground.bind(this)}"
               select="${this.selectBackground.bind(this)}"
-              backgrounds="${props.assets.backgrounds}"
+              backgrounds="${this.state.backgrounds}"
               close=${this.closeModal.bind(this)}
             ><//>`
           : html``}

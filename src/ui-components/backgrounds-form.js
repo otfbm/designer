@@ -8,7 +8,7 @@ const html = htm.bind(h);
 class BackgroundsForm extends Component {
   constructor(props) {
     super(props);
-    this.state = { selected: null, selectedVisual: null };
+    this.state = { selected: null, selectedVisual: null, newURLField: "" };
   }
 
   onSelect = (background) => {
@@ -17,6 +17,13 @@ class BackgroundsForm extends Component {
       selectedVisual: background == null ? "blank" : background,
     });
   };
+
+  onURLSubmit(e) {
+    const { value } = e.target.children[0];
+    this.props.newBackground({ src: value });
+    this.setState({ newURLField: "" });
+    e.preventDefault();
+  }
 
   render(props, state) {
     const cl = this.state.selectedVisual;
@@ -55,6 +62,24 @@ class BackgroundsForm extends Component {
             </div>
           </div>
         </div>
+      </div>
+      <hr />
+      <div class="flex items-center py-2 w-full px-8">
+        <form onSubmit="${this.onURLSubmit.bind(this)}">
+          <input
+            class="w-full border py-2 px-3 text-grey-darkest"
+            type="text"
+            name="background-url"
+            value="${this.state.newURLField}"
+            placeholder="Add background by URL"
+          />
+          <button
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            type="submit"
+          >
+            Add
+          </button>
+        </form>
       </div>
       <${ModalFooter}
         close=${props.close}
