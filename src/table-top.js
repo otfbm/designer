@@ -37,7 +37,7 @@ export default class TableTop {
     state.assetLoader = this.assetLoader;
 
     this.layers = {
-      background: new Background(this.assetLoader),
+      background: new Background(this.assetLoader, this.viewport, this.state),
       axis: new Axis(),
       grid: new Grid(),
       tokens: new TokenCollection(this),
@@ -169,7 +169,7 @@ export default class TableTop {
     this.setBackgroundColor(settings.backgroundColor);
     this.setResolution(settings.resolution);
     this.setGridlines(settings);
-    this.setScale(settings);
+    // this.setScale(settings);
     this.setBackgroundOffset(settings);
     this.setAxis(settings);
   }

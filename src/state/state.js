@@ -125,11 +125,8 @@ export default class State {
   }
 
   async addBackground(background) {
-    const bgURL = `https://bg.otfbm.io/${btoa(background.src)}`;
-    const result = await fetch(bgURL);
-    const blob = await result.blob();
-    const image = await convertBlobToBase64(blob);
-    background.src = `data:image/jpeg;base64,${image}`;
+    // const bgURL = `https://bg.otfbm.io/${btoa(background.src)}`;
+    background.src = `https://bg.otfbm.io/${btoa(background.src)}`;
     this[_backgrounds].push(background);
     this[events].emit("state:backgrounds:update", this[_backgrounds]);
   }
