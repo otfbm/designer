@@ -209,6 +209,14 @@ export default class TableTop {
     }
   }
 
+  setBackgroundEditing(state) {
+    this.layers.background.enableOffsetEditing(state);
+  }
+
+  resetBackgroundOffset() {
+    this.layers.background.resetOffset();
+  }
+
   async run() {
     this.state.on(
       "state:load",
@@ -238,6 +246,14 @@ export default class TableTop {
 
         this.state.on("state:tokens:remove", (token) => {
           this.removeToken(token);
+        });
+
+        this.state.on("state:background:offsetEditing", (state) => {
+          this.setBackgroundEditing(state);
+        });
+
+        this.state.on("state:background:resetOffset", () => {
+          this.resetBackgroundOffset();
         });
 
         this.viewport.addChild(this.layers.tokens.layer);

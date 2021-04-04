@@ -93,12 +93,18 @@ export default class Settings {
       changes = true;
     }
 
-    if (backgroundOffsetX && backgroundOffsetX !== this.backgroundOffsetX) {
+    if (
+      typeof backgroundOffsetY === "number" &&
+      backgroundOffsetX !== this.backgroundOffsetX
+    ) {
       this.backgroundOffsetX = backgroundOffsetX;
       changes = true;
     }
 
-    if (backgroundOffsetY && backgroundOffsetY !== this.backgroundOffsetY) {
+    if (
+      typeof backgroundOffsetY === "number" &&
+      backgroundOffsetY !== this.backgroundOffsetY
+    ) {
       this.backgroundOffsetY = backgroundOffsetY;
       changes = true;
     }

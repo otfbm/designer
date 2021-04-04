@@ -131,6 +131,14 @@ export default class State {
     this[events].emit("state:backgrounds:update", this[_backgrounds]);
   }
 
+  enableMapOffsetEditing(state) {
+    this[events].emit("state:background:offsetEditing", state);
+  }
+
+  resetMapOffset() {
+    this[events].emit("state:background:resetOffset");
+  }
+
   async load() {
     await this.assets.load();
     this[_userTokens] = this.assets.tokens;

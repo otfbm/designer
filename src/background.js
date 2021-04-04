@@ -10,6 +10,7 @@ export default class Background {
     this.sprite = null;
     this.drag = false;
     this.selected = false;
+    this.offsetEditingEnabled = false;
 
     viewport.on("mousedown", this.handleDragStart.bind(this));
     viewport.on("touchstart", this.handleDragStart.bind(this));
@@ -22,7 +23,11 @@ export default class Background {
   }
 
   handleDragStart(e) {
-    if (e.target && e.target.type === "background") {
+    if (
+      e.target &&
+      e.target.type === "background" &&
+      this.offsetEditingEnabled
+    ) {
       const viewportPosition = e.data.getLocalPosition(this.layer.parent);
       const backgroundPosition = e.data.getLocalPosition(this.layer);
 
@@ -73,14 +78,25 @@ export default class Background {
   }
 
   setOffset(x = 0, y = 0) {
-    if (x) {
-      this.layer.pivot.x = 0;
-      this.layer.pivot.y = 0;
-      this.layer.x = x;
-    }
+    this.layer.pivot.x = 0;
+    this.layer.pivot.y = 0;
+    this.layer.x = x;
+    this.layer.y = y;
+  }
 
-    if (y) {
-      this.layer.y = y;
+  resetOffset() {
+    this.state.settings = {
+      backgroundOffsetX: 0,
+      backgroundOffsetY: 0,
+    };
+  }
+
+  enableOffsetEditing(state) {
+    this.offsetEditingEnabled = state;
+    if (state) {
+      document.querySelector("body").style.cursor = "move";
+    } else {
+      document.querySelector("body").style.cursor = "default";
     }
   }
 }

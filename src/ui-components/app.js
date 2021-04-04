@@ -1,6 +1,7 @@
 import { h, Component } from "preact";
 import htm from "htm";
 import SideBar from "./side-bar.js";
+import UtilityBar from "./utility-bar.js";
 import Modal from "./modal.js";
 import TokenMenu from "./token-menu.js";
 import SettingsForm from "./settings-form.js";
@@ -92,6 +93,15 @@ class App extends Component {
   render(props, state) {
     const { selectedToken = {}, userTokens } = this.state;
     return html`
+      <${UtilityBar}
+        offsetEditingToggled="${(state) => {
+          this.props.worldState.enableMapOffsetEditing(state);
+        }}"
+        resetOffset="${() => {
+          this.props.worldState.resetMapOffset();
+        }}"
+        gainFocus="${() => this.setState({ showTokenMenu: false })}"
+      ><//>
       <${SideBar}
         tokens="${userTokens}"
         openSettings="${() =>
