@@ -72,7 +72,7 @@ export default class Background {
     this.src = src;
     if (this.sprite) this.layer.removeChild(this.sprite);
     if (src) {
-      this.sprite = new Sprite(this.assets.resources[src].texture);
+      this.sprite = Sprite.from(src);
       this.layer.addChild(this.sprite);
     }
   }
