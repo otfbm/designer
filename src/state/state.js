@@ -34,7 +34,7 @@ export default class State {
     this[settings] = new Settings(id);
     this[_tokens] = new Tokens(id, this[events], this[indexDBAdapter]);
     this[background] = new Background(id);
-    this.assets = new Assets();
+    this.assets = new Assets(id, this[indexDBAdapter]);
   }
 
   on(event, handler) {
@@ -128,6 +128,7 @@ export default class State {
     // const bgURL = `https://bg.otfbm.io/${btoa(background.src)}`;
     background.src = `https://bg.otfbm.io/${btoa(background.src)}`;
     this[_backgrounds].push(background);
+    await this.assets.add("maps", background);
     this[events].emit("state:backgrounds:update", this[_backgrounds]);
   }
 
@@ -142,7 +143,7 @@ export default class State {
   async load() {
     await this.assets.load();
     this[_userTokens] = this.assets.tokens;
-    this[_backgrounds] = this.assets.backgrounds;
+    this[_backgrounds] = this.assets.maps;
     this[background].set(
       await this[indexDBAdapter].get(`backgrounds`, this.id)
     );

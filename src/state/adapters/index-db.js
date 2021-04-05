@@ -16,6 +16,14 @@ export default class IndexDBAdapter {
         db.createObjectStore("backgrounds", {
           keyPath: "boardId",
         });
+        const mapsStore = db.createObjectStore("maps", {
+          keyPath: "id",
+        });
+        mapsStore.createIndex("boardId", "boardId", { unique: false });
+        const userTokensStore = db.createObjectStore("userTokens", {
+          keyPath: "id",
+        });
+        userTokensStore.createIndex("boardId", "boardId", { unique: false });
       },
     });
   }
