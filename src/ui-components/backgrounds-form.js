@@ -5,6 +5,38 @@ import ModalFooter from "./modal-footer.js";
 
 const html = htm.bind(h);
 
+const DeleteButton = ({ background, onDelete }) => {
+  if (!background.custom) return html``;
+  return html`<div class="absolute -top-1 right-3 w-6 h-6 cursor-pointer">
+    <img
+      class="object-scale-down object-center"
+      src="/delete-sign.png"
+      onClick="${() => onDelete(background)}"
+    />
+  </div>`;
+};
+
+const BackgroundImageThumbnail = ({
+  background,
+  selected,
+  onSelect,
+  onDelete,
+}) => {
+  return html`
+    <div class="md:w-1/4 px-4 mb-8 relative">
+      <${DeleteButton} background=${background} onDelete=${onDelete}><//>
+      <img
+        class="cursor-pointer rounded shadow-md border-solid border-4${selected ===
+        background
+          ? " border-indigo-600"
+          : ""}"
+        src="${background.src}"
+        onClick="${() => onSelect(background)}"
+      />
+    </div>
+  `;
+};
+
 class BackgroundsForm extends Component {
   constructor(props) {
     super(props);
@@ -20,7 +52,7 @@ class BackgroundsForm extends Component {
 
   onURLSubmit(e) {
     const { value } = e.target.children[0];
-    this.props.newBackground({ src: value });
+    if (value) this.props.newBackground({ src: value });
     this.setState({ newURLField: "" });
     e.preventDefault();
   }
@@ -46,18 +78,12 @@ class BackgroundsForm extends Component {
               </div>
               ${props.backgrounds.map(
                 (background) =>
-                  html`<div
-                    class="md:w-1/4 px-4 mb-8"
-                    onClick="${() => this.onSelect(background)}"
-                  >
-                    <img
-                      class="cursor-pointer rounded shadow-md border-solid border-4${cl ===
-                      background
-                        ? " border-indigo-600"
-                        : ""}"
-                      src="${background.src}"
-                    />
-                  </div>`
+                  html`<${BackgroundImageThumbnail}
+                    background="${background}"
+                    selected=${cl}
+                    onSelect="${this.onSelect.bind(this)}"
+                    onDelete="${props.delete}"
+                  ><//>`
               )}
             </div>
           </div>

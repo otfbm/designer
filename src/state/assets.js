@@ -160,8 +160,11 @@ export default class Assets {
     asset.id = uuidv4();
     asset.userId = 1;
     asset.boardId = this.boardId;
-    console.log(type, asset);
     await this.adapter.set(type, asset);
+  }
+
+  async remove(type, asset) {
+    await this.adapter.delete(type, asset.id);
   }
 
   async load() {

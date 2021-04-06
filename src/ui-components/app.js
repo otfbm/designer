@@ -43,6 +43,10 @@ class App extends Component {
     this.setState({ show: false });
   }
 
+  deleteBackground(background) {
+    this.props.worldState.deleteBackground(background);
+  }
+
   deleteToken(token) {
     this.props.worldState.tokens.remove(token);
   }
@@ -132,6 +136,7 @@ class App extends Component {
           ? html`<${BackgroundsForm}
               newBackground="${this.addNewBackground.bind(this)}"
               select="${this.selectBackground.bind(this)}"
+              delete="${this.deleteBackground.bind(this)}"
               backgrounds="${this.state.backgrounds}"
               close=${this.closeModal.bind(this)}
             ><//>`

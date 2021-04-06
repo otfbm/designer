@@ -3,5 +3,6 @@ export default class Background {
     this.id = data.id || null;
     this.src = data.src || "";
     this.userId = data.userId || null;
+    this.custom = data.custom || false;
   }
 }

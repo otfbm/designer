@@ -125,10 +125,19 @@ export default class State {
   }
 
   async addBackground(background) {
-    // const bgURL = `https://bg.otfbm.io/${btoa(background.src)}`;
     background.src = `https://bg.otfbm.io/${btoa(background.src)}`;
+    background.custom = true;
     this[_backgrounds].push(background);
     await this.assets.add("maps", background);
+    this[events].emit("state:backgrounds:update", this[_backgrounds]);
+  }
+
+  async deleteBackground(background) {
+    this[_backgrounds] = this[_backgrounds].filter(
+      (bg) => bg.id !== background.id
+    );
+
+    await this.assets.remove("maps", background);
     this[events].emit("state:backgrounds:update", this[_backgrounds]);
   }
 
