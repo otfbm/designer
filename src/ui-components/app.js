@@ -101,6 +101,9 @@ class App extends Component {
         offsetEditingToggled="${(state) => {
           this.props.worldState.enableMapOffsetEditing(state);
         }}"
+        gridEditingToggled="${(state) => {
+          this.props.worldState.enableMapGridEditing(state);
+        }}"
         resetOffset="${() => {
           this.props.worldState.resetMapOffset();
         }}"

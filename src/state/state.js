@@ -145,6 +145,10 @@ export default class State {
     this[events].emit("state:background:offsetEditing", state);
   }
 
+  enableMapGridEditing(state) {
+    this[events].emit("state:grid:editing", state);
+  }
+
   resetMapOffset() {
     this[events].emit("state:background:resetOffset");
   }

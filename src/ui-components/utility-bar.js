@@ -8,6 +8,7 @@ class UtilityBar extends Component {
     super();
     this.state = {
       editingBackgroundPosition: false,
+      editingGridDrag: false,
     };
   }
 
@@ -17,6 +18,14 @@ class UtilityBar extends Component {
       editingBackgroundPosition: newState,
     });
     this.props.offsetEditingToggled(newState);
+  }
+
+  toggleGridDragEditing() {
+    const newState = !this.state.editingGridDrag;
+    this.setState({
+      editingGridDrag: newState,
+    });
+    this.props.gridEditingToggled(newState);
   }
 
   render({ resetOffset, gainFocus }) {
@@ -45,6 +54,17 @@ class UtilityBar extends Component {
           }}"
         >
           <img class="h-6 w-6" src="rotate-left.png" />
+        </button>
+      </div>
+      <div class="flex-shrink-0">
+        <button
+          id="enable-grid-resize-button"
+          onClick="${() => {
+            this.toggleGridDragEditing();
+            gainFocus();
+          }}"
+        >
+          <img class="h-6 w-6" src="split-horizontal.png" />
         </button>
       </div>
     </div>`;

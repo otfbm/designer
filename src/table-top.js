@@ -252,6 +252,11 @@ export default class TableTop {
           this.setBackgroundEditing(state);
         });
 
+        this.state.on("state:grid:editing", (state) => {
+          // this.setBackgroundEditing(state);
+          console.log({ gridEditing: state });
+        });
+
         this.state.on("state:background:resetOffset", () => {
           this.resetBackgroundOffset();
         });
