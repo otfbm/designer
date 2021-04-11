@@ -3,7 +3,6 @@ import { Viewport } from "pixi-viewport";
 import keyboard from "./keyboard.js";
 import Grid from "./grid.js";
 import Background from "./background.js";
-import Axis from "./axis.js";
 import TokenLayer from "./token-layer.js";
 import TokenCollection from "./token-collection.js";
 import GameAssets from "./game-assets.js";
@@ -38,13 +37,11 @@ export default class TableTop {
 
     this.layers = {
       background: new Background(this.assetLoader, this.viewport, this.state),
-      axis: new Axis(),
-      grid: new Grid(this.viewport),
+      grid: new Grid(this.viewport, this.state),
       tokens: new TokenCollection(this),
     };
 
     this.viewport.addChild(this.layers.background.layer);
-    this.viewport.addChild(this.layers.axis.layer);
     this.viewport.addChild(this.layers.grid.layer);
     this.viewport.addChild(this.layers.tokens.layer);
 
@@ -131,10 +128,6 @@ export default class TableTop {
     this.layers.tokens.update(settings);
   }
 
-  setAxis(settings) {
-    this.layers.axis.draw(settings);
-  }
-
   setResolution(resolution) {
     this.app.renderer.resolution = resolution;
   }
@@ -171,7 +164,6 @@ export default class TableTop {
     this.setGridlines(settings);
     // this.setScale(settings);
     this.setBackgroundOffset(settings);
-    this.setAxis(settings);
   }
 
   addToken(token, settings) {

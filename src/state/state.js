@@ -116,7 +116,6 @@ export default class State {
         );
       }
     }
-
     const changed = this[settings].set(values);
     if (changed) {
       this[events].emit("state:settings:update", this.settings);

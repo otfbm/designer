@@ -1,15 +1,32 @@
-import { Container } from "pixi.js";
+import { Container, TextStyle, Text } from "pixi.js";
 import { line, rectangle } from "./shapes.js";
 
+const fontSize = (cellsize) => {
+  if (cellsize <= 30) return 8;
+  if (cellsize <= 40) return 10;
+  if (cellsize <= 50) return 12;
+  if (cellsize <= 60) return 14;
+  if (cellsize <= 70) return 16;
+  if (cellsize <= 80) return 18;
+  if (cellsize <= 90) return 20;
+  if (cellsize <= 100) return 22;
+  if (cellsize > 100) return 24;
+};
+
 export default class Grid {
-  constructor(viewport) {
+  constructor(viewport, state) {
+    this.state = state;
     this.layer = new Container();
     this.borders = new Container();
     this.gridLines = new Container();
+    this.axis = new Container();
     this.editingEnabled = false;
+    this.width = null;
+    this.height = null;
 
     this.layer.addChild(this.gridLines);
     this.layer.addChild(this.borders);
+    this.layer.addChild(this.axis);
 
     viewport.on("mousedown", this.handleDragStart.bind(this));
     viewport.on("touchstart", this.handleDragStart.bind(this));
@@ -19,6 +36,49 @@ export default class Grid {
 
     viewport.on("mouseup", this.handleDragEnd.bind(this));
     viewport.on("touchend", this.handleDragEnd.bind(this));
+  }
+
+  drawXAxis({ cellsize, width }, style) {
+    for (let i = 0; i < width; i++) {
+      let character = String.fromCharCode((i % 26) + 65);
+      if (i >= 26)
+        character = String.fromCharCode(Math.floor(i / 26) + 64) + character;
+
+      const text = new Text(character, style);
+      text.anchor.set(0.5, 0.5);
+      text.x = cellsize / 2 + cellsize * i;
+      text.y = -24;
+      this.axis.addChild(text);
+    }
+  }
+
+  drawYAxis({ cellsize, height }, style) {
+    for (let i = 0; i < height; i++) {
+      const text = new Text(String(i + 1), style);
+      text.anchor.set(0.5, 0.5);
+      text.x = -24;
+      text.y = cellsize / 2 + cellsize * i;
+      this.axis.addChild(text);
+    }
+  }
+
+  drawAxis({ cellsize, height, width }) {
+    this.axis.removeChildren();
+
+    const style = new TextStyle({
+      fontFamily: "Arial",
+      fontSize: fontSize(cellsize),
+      fill: "white",
+      // stroke: "#ff3300",
+      // strokeThickness: 4,
+      // dropShadow: true,
+      // dropShadowColor: "#000000",
+      // dropShadowBlur: 4,
+      // dropShadowAngle: Math.PI / 6,
+      // dropShadowDistance: 6,
+    });
+    this.drawXAxis({ cellsize, width }, style);
+    this.drawYAxis({ cellsize, height }, style);
   }
 
   handleDragStart(e) {
@@ -37,48 +97,58 @@ export default class Grid {
   handleDrag(e) {
     if (this.dragBottom || this.dragRight) {
       const position = e.data.getLocalPosition(this.layer.parent);
+      const params = {
+        ...this.state.settings,
+      };
 
       if (this.dragBottom) {
-        const height = Math.round(position.y / this.settings.cellsize);
-        this.settings.height = height;
+        this.height = Math.round(position.y / this.state.settings.cellsize);
+        params.height = this.height;
       }
 
       if (this.dragRight) {
-        const width = Math.round(position.x / this.settings.cellsize);
-        this.settings.width = width;
+        this.width = Math.round(position.x / this.state.settings.cellsize);
+        params.width = this.width;
       }
 
-      this.drawBorder(this.settings, true);
-      this.drawInternalGrid(this.settings);
+      this.drawBorder({ ...params, handles: true });
+      this.drawInternalGrid(params);
+      this.drawAxis(params);
     }
   }
 
-  handleDragEnd(e) {
+  handleDragEnd() {
+    const settings = {};
+    if (this.width) settings.width = this.width;
+    if (this.height) settings.height = this.height;
+    this.state.settings = settings;
+
+    this.width = null;
+    this.height = null;
+
     this.dragRight = false;
     this.dragBottom = false;
     this.layer.parent.pause = false;
   }
 
-  enableEditing(settings, state) {
-    this.editingEnabled = state;
-    if (this.editingEnabled) {
+  enableEditing(editingState) {
+    if (editingState) {
       document.querySelector("body").style.cursor = "nesw-resize";
     } else {
       document.querySelector("body").style.cursor = "default";
     }
-    this.settings = settings;
-    this.drawBorder(settings, this.editingEnabled);
+    this.editingEnabled = editingState;
+    this.drawBorder({ ...this.state.settings, handles: editingState });
   }
 
-  drawInternalGrid(settings) {
+  drawInternalGrid({ cellsize, width, height, gridTransparency, gridColor }) {
     this.gridLines.removeChildren();
-    const { cellsize, gridTransparency, gridColor } = settings;
     const thickness = 1;
 
-    for (let x = 1; x < settings.width; x++) {
+    for (let x = 1; x < width; x++) {
       const l = line(
         { x: 0, y: 0 },
-        { x: 0, y: 0.5 + settings.heightPx },
+        { x: 0, y: 0.5 + height * cellsize },
         thickness,
         gridTransparency,
         parseInt(gridColor, 16)
@@ -87,10 +157,10 @@ export default class Grid {
       this.gridLines.addChild(l);
     }
     let y = cellsize;
-    for (let y = 1; y < settings.height; y++) {
+    for (let y = 1; y < height; y++) {
       const l = line(
         { x: 0, y: 0 },
-        { x: 0.5 + settings.widthPx, y: 0 },
+        { x: 0.5 + width * cellsize, y: 0 },
         thickness,
         gridTransparency,
         parseInt(gridColor, 16)
@@ -100,14 +170,20 @@ export default class Grid {
     }
   }
 
-  drawBorder(settings, handles = false) {
+  drawBorder({
+    cellsize,
+    height,
+    width,
+    gridTransparency,
+    gridColor,
+    handles = false,
+  }) {
     this.borders.removeChildren();
-    const { gridTransparency, gridColor } = settings;
     const thickness = 1;
 
     const leftBorder = line(
       { x: 0, y: 0 },
-      { x: 0, y: settings.heightPx },
+      { x: 0, y: height * cellsize },
       thickness,
       gridTransparency,
       parseInt(gridColor, 16)
@@ -117,7 +193,7 @@ export default class Grid {
 
     const topBorder = line(
       { x: 0, y: 0 },
-      { x: settings.widthPx, y: 0 },
+      { x: width * cellsize, y: 0 },
       thickness,
       gridTransparency,
       parseInt(gridColor, 16)
@@ -127,23 +203,23 @@ export default class Grid {
 
     this.rightBorder = line(
       { x: 0, y: 0 },
-      { x: 0, y: settings.heightPx },
+      { x: 0, y: height * cellsize },
       thickness,
       gridTransparency,
       parseInt(gridColor, 16)
     );
-    this.rightBorder.x = settings.widthPx;
+    this.rightBorder.x = width * cellsize;
     this.rightBorder.type = "rightBorder";
     this.borders.addChild(this.rightBorder);
 
     this.bottomBorder = line(
       { x: 0, y: 0 },
-      { x: settings.widthPx, y: 0 },
+      { x: width * cellsize, y: 0 },
       thickness,
       gridTransparency,
       parseInt(gridColor, 16)
     );
-    this.bottomBorder.y = settings.heightPx;
+    this.bottomBorder.y = height * cellsize;
     this.bottomBorder.type = "bottomBorder";
     this.borders.addChild(this.bottomBorder);
 
@@ -159,14 +235,14 @@ export default class Grid {
 
       rightHandle.interactive = true;
       rightHandle.type = "rightBorder";
-      rightHandle.x = settings.widthPx - 3;
-      rightHandle.y = settings.heightPx / 2 - 6;
+      rightHandle.x = width * cellsize - 3;
+      rightHandle.y = (height * cellsize) / 2 - 6;
       this.rightHandle = rightHandle;
 
       bottomHandle.interactive = true;
       bottomHandle.type = "bottomBorder";
-      bottomHandle.x = settings.widthPx / 2 - 6;
-      bottomHandle.y = settings.heightPx - 3;
+      bottomHandle.x = (width * cellsize) / 2 - 6;
+      bottomHandle.y = height * cellsize - 3;
       this.bottomHandle = bottomHandle;
 
       this.borders.addChild(rightHandle);
@@ -175,8 +251,8 @@ export default class Grid {
   }
 
   draw(settings) {
-    this.settings = settings;
     this.drawInternalGrid(settings);
-    this.drawBorder(settings, this.editingEnabled);
+    this.drawBorder({ ...settings, handles: this.editingEnabled });
+    this.drawAxis(settings);
   }
 }
