@@ -39,7 +39,7 @@ export default class TableTop {
     this.layers = {
       background: new Background(this.assetLoader, this.viewport, this.state),
       axis: new Axis(),
-      grid: new Grid(),
+      grid: new Grid(this.viewport),
       tokens: new TokenCollection(this),
     };
 
@@ -213,6 +213,10 @@ export default class TableTop {
     this.layers.background.enableOffsetEditing(state);
   }
 
+  setGridEditing(settings, state) {
+    this.layers.grid.enableEditing(settings, state);
+  }
+
   resetBackgroundOffset() {
     this.layers.background.resetOffset();
   }
@@ -253,8 +257,7 @@ export default class TableTop {
         });
 
         this.state.on("state:grid:editing", (state) => {
-          // this.setBackgroundEditing(state);
-          console.log({ gridEditing: state });
+          this.setGridEditing(settings, state);
         });
 
         this.state.on("state:background:resetOffset", () => {

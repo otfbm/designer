@@ -8,10 +8,16 @@ export const line = (from, to, thickness = 1, alpha = 1, color = 0xffffff) => {
   return line;
 };
 
-export const rectangle = (topLeft, bottomRight, thickness = 1, alpha = 1) => {
+export const rectangle = (
+  topLeft,
+  bottomRight,
+  thickness = 1,
+  alpha = 1,
+  color = 0xffffff
+) => {
   let rect = new Graphics();
-  rect.lineStyle(thickness, 0xff3300, alpha);
-  rect.beginFill(0x66ccff);
+  rect.lineStyle(thickness, color, alpha);
+  rect.beginFill(color);
   rect.drawRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
   rect.endFill();
   return rect;
