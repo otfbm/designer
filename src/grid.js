@@ -91,11 +91,16 @@ export default class Grid {
         this.dragBottom = true;
         this.layer.parent.pause = true;
       }
+      if (e.target && e.target.type === "bottomRightCorner") {
+        console.log("dragging bottom corner 1");
+        this.dragBottomCorner = true;
+        this.layer.parent.pause = true;
+      }
     }
   }
 
   handleDrag(e) {
-    if (this.dragBottom || this.dragRight) {
+    if (this.dragBottom || this.dragRight || this.dragBottomCorner) {
       const position = e.data.getLocalPosition(this.layer.parent);
       const params = {
         ...this.state.settings,
@@ -111,6 +116,13 @@ export default class Grid {
         params.width = this.width;
       }
 
+      if (this.dragBottomCorner) {
+        console.log("dragging bottom corner 2");
+        const br = e.data.getLocalPosition(this.layer);
+        this.cellsize = br.x / this.state.settings.width;
+        params.cellsize = this.cellsize;
+      }
+
       this.drawBorder({ ...params, handles: true });
       this.drawInternalGrid(params);
       this.drawAxis(params);
@@ -121,13 +133,16 @@ export default class Grid {
     const settings = {};
     if (this.width) settings.width = this.width;
     if (this.height) settings.height = this.height;
+    if (this.cellsize) settings.cellsize = this.cellsize;
     this.state.settings = settings;
 
     this.width = null;
     this.height = null;
+    this.cellsize = null;
 
     this.dragRight = false;
     this.dragBottom = false;
+    this.dragBottomCorner = false;
     this.layer.parent.pause = false;
   }
 
@@ -232,6 +247,11 @@ export default class Grid {
         { x: 10, y: 4 },
         thickness
       );
+      const bottomCornerHandle = rectangle(
+        { x: 0, y: 0 },
+        { x: 9, y: 9 },
+        thickness
+      );
 
       rightHandle.interactive = true;
       rightHandle.type = "rightBorder";
@@ -245,8 +265,15 @@ export default class Grid {
       bottomHandle.y = height * cellsize - 3;
       this.bottomHandle = bottomHandle;
 
+      bottomCornerHandle.interactive = true;
+      bottomCornerHandle.type = "bottomRightCorner";
+      bottomCornerHandle.x = width * cellsize - 5;
+      bottomCornerHandle.y = height * cellsize - 5;
+      this.bottomCornerHandle = bottomCornerHandle;
+
       this.borders.addChild(rightHandle);
       this.borders.addChild(bottomHandle);
+      this.borders.addChild(bottomCornerHandle);
     }
   }
 

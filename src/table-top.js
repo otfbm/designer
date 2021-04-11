@@ -205,8 +205,8 @@ export default class TableTop {
     this.layers.background.enableOffsetEditing(state);
   }
 
-  setGridEditing(settings, state) {
-    this.layers.grid.enableEditing(settings, state);
+  setGridEditing(state) {
+    this.layers.grid.enableEditing(state);
   }
 
   resetBackgroundOffset() {
@@ -249,7 +249,7 @@ export default class TableTop {
         });
 
         this.state.on("state:grid:editing", (state) => {
-          this.setGridEditing(settings, state);
+          this.setGridEditing(state);
         });
 
         this.state.on("state:background:resetOffset", () => {
