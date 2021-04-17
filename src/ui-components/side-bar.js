@@ -9,7 +9,7 @@ class SideBar extends Component {
     super();
   }
 
-  render({ tokens, openSettings, openBackgrounds, gainFocus }) {
+  render({ tokens, openSettings, openBackgrounds, openOTFBMInfo, gainFocus }) {
     return html`<div
       id="sidebar"
       class="absolute inset-y-0 right-0 w-16 bg-white bg-opacity-50 shadow p-1"
@@ -29,6 +29,15 @@ class SideBar extends Component {
         onClick="${() => {
           gainFocus();
           openBackgrounds();
+        }}"
+      >
+        <img src="picture.png" />
+      </button>
+      <button
+        id="OTFBM-info-button"
+        onClick="${() => {
+          gainFocus();
+          openOTFBMInfo();
         }}"
       >
         <img src="picture.png" />

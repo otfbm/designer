@@ -6,6 +6,7 @@ import Modal from "./modal.js";
 import TokenMenu from "./token-menu.js";
 import SettingsForm from "./settings-form.js";
 import BackgroundsForm from "./backgrounds-form.js";
+import OTFBMInfo from "./otfbm-info.js";
 import DragDrop from "../drag-drop.js";
 
 const html = htm.bind(h);
@@ -16,10 +17,11 @@ class App extends Component {
     this.state = {
       show: false,
       selectedToken: null,
+      selectedBackground: null,
       showBackgrounds: false,
+      showOTFBMInfo: false,
       settings: props.worldState.settings,
       showSettings: false,
-      modalTitle: "",
       backgrounds: [],
       userTokens: [],
     };
@@ -40,7 +42,7 @@ class App extends Component {
 
   selectBackground(background) {
     this.props.worldState.background = background;
-    this.setState({ show: false });
+    this.setState({ show: false, selectBackground: background });
   }
 
   deleteBackground(background) {
@@ -58,8 +60,13 @@ class App extends Component {
   componentDidMount() {
     this.props.worldState.on(
       "state:load",
-      ({ settings, backgrounds, userTokens }) => {
-        this.setState({ backgrounds, userTokens, settings });
+      ({ settings, backgrounds, userTokens, background }) => {
+        this.setState({
+          backgrounds,
+          userTokens,
+          settings,
+          selectedBackground: background,
+        });
       }
     );
     this.props.worldState.on("state:backgrounds:update", (backgrounds) => {
@@ -77,6 +84,9 @@ class App extends Component {
     this.props.worldState.on("state:tokens:deselect", () => {
       this.setState({ selectedToken: null, showTokenMenu: false });
     });
+    this.props.worldState.on("state:background:update", (background) => {
+      this.setState({ selectedBackground: background });
+    });
     this.dragDrop.enable();
   }
 
@@ -87,6 +97,7 @@ class App extends Component {
     this.props.worldState.off("state:settings:update");
     this.props.worldState.off("state:tokens:select");
     this.props.worldState.off("state:tokens:deselect");
+    this.props.worldState.off("state:background:update");
     this.dragDrop.disable();
   }
 
@@ -95,7 +106,7 @@ class App extends Component {
   }
 
   render(props, state) {
-    const { selectedToken = {}, userTokens } = this.state;
+    const { selectedToken = {}, userTokens, selectedBackground } = this.state;
     return html`
       <${UtilityBar}
         offsetEditingToggled="${(state) => {
@@ -115,19 +126,33 @@ class App extends Component {
           this.setState({
             show: true,
             showBackgrounds: false,
+            showOTFBMInfo: false,
             showSettings: true,
-            modalTitle: "Settings",
           })}"
         openBackgrounds="${() =>
           this.setState({
             show: true,
             showBackgrounds: true,
+            showOTFBMInfo: false,
             showSettings: false,
-            modalTitle: "Backgrounds",
+          })}"
+        openOTFBMInfo="${() =>
+          this.setState({
+            show: true,
+            showBackgrounds: false,
+            showOTFBMInfo: true,
+            showSettings: false,
           })}"
         gainFocus="${() => this.setState({ showTokenMenu: false })}"
       ><//>
       <${Modal} show=${state.show}>
+        ${state.showOTFBMInfo
+          ? html`<${OTFBMInfo}
+              settings="${state.settings}"
+              background="${selectedBackground}"
+              close=${this.closeModal.bind(this)}
+            ><//>`
+          : html``}
         ${state.showSettings
           ? html`<${SettingsForm}
               submit="${(settings) => (props.worldState.settings = settings)}"

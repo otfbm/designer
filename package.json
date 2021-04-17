@@ -8,18 +8,20 @@
     "start": "http-server public",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup -c",
+    "build:css": "npx tailwindcss-cli@latest build ./src/styles.css -c ./tailwind.config.cjs -o ./public/styles.css",
+    "build:css:prod": "NODE_ENV=production npx tailwindcss-cli@latest build -c ./tailwind.config.cjs ./src/styles.css -o ./public/styles.css",
     "watch": "rollup -cw"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.13.8",
     "@babel/preset-env": "^7.13.9",
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-commonjs": "^17.1.0",
     "@rollup/plugin-node-resolve": "^11.2.0",
+    "autoprefixer": "^10.2.5",
     "eventemitter3": "^4.0.7",
     "fastify": "^3.14.1",
     "fastify-cors": "^5.2.0",
@@ -29,8 +31,11 @@
     "microbundle": "^0.13.0",
     "pixi-viewport": "^4.21.1",
     "pixi.js": "^6.0.0",
+    "postcss": "^8.2.10",
+    "postcss-cli": "^8.3.1",
     "preact": "^10.5.12",
     "rollup": "^2.40.0",
+    "tailwindcss": "^2.1.1",
     "tap": "^14.11.0"
   }
 }
