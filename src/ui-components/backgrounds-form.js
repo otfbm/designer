@@ -90,10 +90,13 @@ class BackgroundsForm extends Component {
         </div>
       </div>
       <hr />
-      <div class="flex items-center py-2 w-full px-8">
-        <form onSubmit="${this.onURLSubmit.bind(this)}">
+      <div class="py-2 w-full px-8">
+        <form
+          class="flex flex-row items-center"
+          onSubmit="${this.onURLSubmit.bind(this)}"
+        >
           <input
-            class="w-full border py-2 px-3 text-grey-darkest"
+            class="w-full border py-2 px-3 text-grey-darkest mr-2"
             type="text"
             name="background-url"
             value="${this.state.newURLField}"
