@@ -1,5 +1,11 @@
 import { h, Component } from "preact";
 import htm from "htm";
+import SVGController from "./svg-components/controller";
+import SVGImage from "./svg-components/image";
+import SVGDragout from "./svg-components/dragout";
+import SVGDownload from "./svg-components/download";
+import SVGOptions from "./svg-components/options";
+import SVGUndo from "./svg-components/undo";
 
 const html = htm.bind(h);
 
@@ -28,10 +34,16 @@ class UtilityBar extends Component {
     this.props.gridEditingToggled(newState);
   }
 
-  render({ resetOffset, gainFocus }) {
+  render({
+    resetOffset,
+    gainFocus,
+    openBackgrounds,
+    openOTFBMInfo,
+    openSettings,
+  }) {
     return html`<div
       id="utility-bar"
-      class="absolute top-2 left-2 flex items-left space-x-2 max-w-sm h-10 bg-white bg-opacity-50 shadow p-2"
+      class="left-auto right-auto flex items-left space-x-2 max-w-sm h-10 bg-black bg-opacity-50 shadow p-2"
       onClick="${gainFocus}"
     >
       <div class="flex-shrink-0">
@@ -42,7 +54,7 @@ class UtilityBar extends Component {
             gainFocus();
           }}"
         >
-          <img class="h-6 w-6" src="move.png" />
+          <${SVGController} />
         </button>
       </div>
       <div class="flex-shrink-0">
@@ -53,7 +65,7 @@ class UtilityBar extends Component {
             gainFocus();
           }}"
         >
-          <img class="h-6 w-6" src="rotate-left.png" />
+          <${SVGUndo} />
         </button>
       </div>
       <div class="flex-shrink-0">
@@ -64,7 +76,40 @@ class UtilityBar extends Component {
             gainFocus();
           }}"
         >
-          <img class="h-6 w-6" src="split-horizontal.png" />
+          <${SVGDragout} />
+        </button>
+      </div>
+      <div class="flex-shrink-0">
+        <button
+          id="backgrounds-button"
+          onClick="${() => {
+            gainFocus();
+            openBackgrounds();
+          }}"
+        >
+          <${SVGImage} />
+        </button>
+      </div>
+      <div class="flex-shrink-0">
+        <button
+          id="OTFBM-info-button"
+          onClick="${() => {
+            gainFocus();
+            openOTFBMInfo();
+          }}"
+        >
+          <${SVGDownload} />
+        </button>
+      </div>
+      <div class="flex-shrink-0">
+        <button
+          id="settings-button"
+          onClick="${() => {
+            gainFocus();
+            openSettings();
+          }}"
+        >
+          <${SVGOptions} />
         </button>
       </div>
     </div>`;

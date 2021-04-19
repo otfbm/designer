@@ -108,43 +108,66 @@ class App extends Component {
   render(props, state) {
     const { selectedToken = {}, userTokens, selectedBackground } = this.state;
     return html`
-      <${UtilityBar}
-        offsetEditingToggled="${(state) => {
-          this.props.worldState.enableMapOffsetEditing(state);
-        }}"
-        gridEditingToggled="${(state) => {
-          this.props.worldState.enableMapGridEditing(state);
-        }}"
-        resetOffset="${() => {
-          this.props.worldState.resetMapOffset();
-        }}"
-        gainFocus="${() => this.setState({ showTokenMenu: false })}"
-      ><//>
-      <${SideBar}
+      <div class="absolute top-2 w-full grid justify-items-center">
+        <${UtilityBar}
+          offsetEditingToggled="${(state) => {
+            this.props.worldState.enableMapOffsetEditing(state);
+          }}"
+          gridEditingToggled="${(state) => {
+            this.props.worldState.enableMapGridEditing(state);
+          }}"
+          resetOffset="${() => {
+            this.props.worldState.resetMapOffset();
+          }}"
+          gainFocus="${() => this.setState({ showTokenMenu: false })}"
+          openSettings="${() =>
+            this.setState({
+              show: true,
+              showBackgrounds: false,
+              showOTFBMInfo: false,
+              showSettings: true,
+            })}"
+          openBackgrounds="${() =>
+            this.setState({
+              show: true,
+              showBackgrounds: true,
+              showOTFBMInfo: false,
+              showSettings: false,
+            })}"
+          openOTFBMInfo="${() =>
+            this.setState({
+              show: true,
+              showBackgrounds: false,
+              showOTFBMInfo: true,
+              showSettings: false,
+            })}"
+        ><//>
+      </div>
+      <!-- <${SideBar}
         tokens="${userTokens}"
         openSettings="${() =>
-          this.setState({
-            show: true,
-            showBackgrounds: false,
-            showOTFBMInfo: false,
-            showSettings: true,
-          })}"
+        this.setState({
+          show: true,
+          showBackgrounds: false,
+          showOTFBMInfo: false,
+          showSettings: true,
+        })}"
         openBackgrounds="${() =>
-          this.setState({
-            show: true,
-            showBackgrounds: true,
-            showOTFBMInfo: false,
-            showSettings: false,
-          })}"
+        this.setState({
+          show: true,
+          showBackgrounds: true,
+          showOTFBMInfo: false,
+          showSettings: false,
+        })}"
         openOTFBMInfo="${() =>
-          this.setState({
-            show: true,
-            showBackgrounds: false,
-            showOTFBMInfo: true,
-            showSettings: false,
-          })}"
+        this.setState({
+          show: true,
+          showBackgrounds: false,
+          showOTFBMInfo: true,
+          showSettings: false,
+        })}"
         gainFocus="${() => this.setState({ showTokenMenu: false })}"
-      ><//>
+      ><//> -->
       <${Modal} show=${state.show}>
         ${state.showOTFBMInfo
           ? html`<${OTFBMInfo}
