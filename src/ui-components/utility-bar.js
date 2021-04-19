@@ -43,7 +43,7 @@ class UtilityBar extends Component {
   }) {
     return html`<div
       id="utility-bar"
-      class="left-auto right-auto flex items-left space-x-2 max-w-sm h-10 bg-black bg-opacity-50 shadow p-2"
+      class="left-auto right-auto flex items-left space-x-2 max-w-sm h-10 bg-black bg-opacity-75 shadow p-2 rounded-md"
       onClick="${gainFocus}"
     >
       <div class="flex-shrink-0">
