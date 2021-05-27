@@ -42,7 +42,12 @@ export default class IndexDBAdapter {
   async getAll(store, index, value) {
     const db = await this.db;
     if (index && value) return db.getAllFromIndex(store, index, value);
-    return db.getAll(store, query, count);
+    if (index) return db.getAllFromIndex(store, index);
+    return db.getAll(store);
+  }
+  async getAllByIndex(store, index) {
+    const db = await this.db;
+    return db.getAllFromIndex(store, index);
   }
   async delete(store, key) {
     const db = await this.db;
