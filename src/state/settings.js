@@ -1,7 +1,7 @@
 const defaults = {
   NAME: "",
-  WIDTH: 10,
-  HEIGHT: 10,
+  WIDTH: Math.floor(window.innerWidth / 50),
+  HEIGHT: Math.floor(window.innerHeight / 50),
   CELLSIZE: 50,
   RESOLUTION: 1,
   BACKGROUND_COLOR: "8f8f8f",
