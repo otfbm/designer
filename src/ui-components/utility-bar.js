@@ -48,24 +48,13 @@ class UtilityBar extends Component {
     >
       <div class="flex-shrink-0">
         <button
-          id="enable-offset-map-button"
+          id="backgrounds-button"
           onClick="${() => {
-            this.toggleBackgroundPositionEditing();
             gainFocus();
+            openBackgrounds();
           }}"
         >
-          <${SVGController} />
-        </button>
-      </div>
-      <div class="flex-shrink-0">
-        <button
-          id="enable-offset-map-button"
-          onClick="${() => {
-            resetOffset();
-            gainFocus();
-          }}"
-        >
-          <${SVGUndo} />
+          <${SVGImage} />
         </button>
       </div>
       <div class="flex-shrink-0">
@@ -81,15 +70,26 @@ class UtilityBar extends Component {
       </div>
       <div class="flex-shrink-0">
         <button
-          id="backgrounds-button"
+          id="enable-offset-map-button"
           onClick="${() => {
+            this.toggleBackgroundPositionEditing();
             gainFocus();
-            openBackgrounds();
           }}"
         >
-          <${SVGImage} />
+          <${SVGController} />
         </button>
       </div>
+      <!-- <div class="flex-shrink-0">
+        <button
+          id="enable-offset-map-button"
+          onClick="${() => {
+        resetOffset();
+        gainFocus();
+      }}"
+        >
+          <${SVGUndo} />
+        </button>
+      </div> -->
       <div class="flex-shrink-0">
         <button
           id="OTFBM-info-button"

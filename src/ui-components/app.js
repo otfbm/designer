@@ -168,7 +168,7 @@ class App extends Component {
         })}"
         gainFocus="${() => this.setState({ showTokenMenu: false })}"
       ><//> -->
-      <${Modal} show=${state.show}>
+      <${Modal} show=${state.show} close=${this.closeModal.bind(this)}>
         ${state.showOTFBMInfo
           ? html`<${OTFBMInfo}
               settings="${state.settings}"
