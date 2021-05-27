@@ -5,13 +5,8 @@ import ModalHeader from "./modal-header.js";
 const html = htm.bind(h);
 
 function buildURL(settings, background) {
-  const {
-    width,
-    height,
-    cellsize,
-    backgroundOffsetX,
-    backgroundOffsetY,
-  } = settings;
+  const { width, height, cellsize, backgroundOffsetX, backgroundOffsetY } =
+    settings;
   const segments = [];
   if (width && height) segments.push(`${width}x${height}`);
 
@@ -37,13 +32,8 @@ function buildURL(settings, background) {
 }
 
 function buildJSON(settings, background) {
-  const {
-    width,
-    height,
-    cellsize,
-    backgroundOffsetX,
-    backgroundOffsetY,
-  } = settings;
+  const { width, height, cellsize, backgroundOffsetX, backgroundOffsetY } =
+    settings;
   const config = {};
 
   const options = [];
@@ -67,7 +57,41 @@ function buildJSON(settings, background) {
   return JSON.stringify(config, null, 2);
 }
 
+function buildAlias(settings, background) {
+  const { width, height, cellsize, backgroundOffsetX, backgroundOffsetY } =
+    settings;
+  let cmd = "!map";
+
+  const options = [];
+  if (cellsize) options.push(`c${cellsize}`);
+  if (
+    backgroundOffsetX &&
+    backgroundOffsetX !== 0 &&
+    backgroundOffsetY &&
+    backgroundOffsetY !== 0
+  ) {
+    options.push(
+      `o${settings.backgroundOffsetX * -1}:${settings.backgroundOffsetY * -1}`
+    );
+  }
+
+  if (options.length) cmd += ` -options ${options.join("")}`;
+
+  if (width && height) cmd += ` -mapsize ${width}x${height}`;
+
+  if (background.src) cmd += ` -bg ${background.src}`;
+
+  return cmd;
+}
+
 class OTFBMInfo extends Component {
+  copyAliasToClipboard() {
+    const field = document.querySelector("#otfbm-alias");
+    field.focus();
+    field.select();
+    document.execCommand("copy");
+  }
+
   copyToClipboard() {
     const field = document.querySelector("#otfbm-url");
     field.focus();
@@ -85,6 +109,7 @@ class OTFBMInfo extends Component {
   render(props) {
     const url = buildURL(props.settings, props.background);
     const json = buildJSON(props.settings, props.background);
+    const alias = buildAlias(props.settings, props.background);
 
     return html`<${ModalHeader} close=${props.close}>OTFBM Details<//>
       <div class="p-8 overflow-auto h-full">
@@ -93,6 +118,29 @@ class OTFBMInfo extends Component {
             <div class="w-full h-full">
               <form class="mb-4 h-full">
                 <div class="flex flex-col mb-4 h-full">
+                  <div class="flex flex-col mb-3">
+                    <label
+                      class="mb-2 uppercase font-bold text-sm text-grey-darkest"
+                      for="otfbm-url"
+                      >!map alias command</label
+                    >
+                    <div class="flex flex-row">
+                      <input
+                        class="border py-2 px-3 text-grey-darkest w-3/4"
+                        name="otfbm-alias"
+                        id="otfbm-alias"
+                        type="text"
+                        value=${alias}
+                      />
+                      <div class="flex flex-col ml-2">
+                        <a
+                          class="text-blue-700 underline cursor-pointer"
+                          onClick=${() => this.copyAliasToClipboard()}
+                          >Copy</a
+                        >
+                      </div>
+                    </div>
+                  </div>
                   <div class="flex flex-col mb-3">
                     <label
                       class="mb-2 uppercase font-bold text-sm text-grey-darkest"
