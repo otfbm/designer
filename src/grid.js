@@ -36,6 +36,8 @@ export default class Grid {
 
     viewport.on("mouseup", this.handleDragEnd.bind(this));
     viewport.on("touchend", this.handleDragEnd.bind(this));
+
+    viewport.on("mousemove", this.setCursorDragHandleGraphics.bind(this));
   }
 
   drawXAxis({ cellsize, width }, style) {
@@ -81,6 +83,18 @@ export default class Grid {
     this.drawYAxis({ cellsize, height }, style);
   }
 
+  setCursorDragHandleGraphics(e) {
+    if (this.editingEnabled) {
+      if (e.target && e.target.type === "rightBorder")
+        document.querySelector("body").style.cursor = "ew-resize";
+      else if (e.target && e.target.type === "bottomBorder")
+        document.querySelector("body").style.cursor = "ns-resize";
+      else if (e.target && e.target.type === "bottomRightCorner")
+        document.querySelector("body").style.cursor = "nwse-resize";
+      else document.querySelector("body").style.cursor = "default";
+    } else document.querySelector("body").style.cursor = "default";
+  }
+
   handleDragStart(e) {
     if (this.editingEnabled) {
       if (e.target && e.target.type === "rightBorder") {
@@ -116,7 +130,6 @@ export default class Grid {
       }
 
       if (this.dragBottomCorner) {
-        console.log("dragging bottom corner 2");
         const br = e.data.getLocalPosition(this.layer);
         this.cellsize = br.x / this.state.settings.width;
         params.cellsize = this.cellsize;
@@ -146,11 +159,6 @@ export default class Grid {
   }
 
   enableEditing(editingState) {
-    if (editingState) {
-      document.querySelector("body").style.cursor = "nesw-resize";
-    } else {
-      document.querySelector("body").style.cursor = "default";
-    }
     this.editingEnabled = editingState;
     this.drawBorder({ ...this.state.settings, handles: editingState });
   }
