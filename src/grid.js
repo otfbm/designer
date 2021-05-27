@@ -92,7 +92,6 @@ export default class Grid {
         this.layer.parent.pause = true;
       }
       if (e.target && e.target.type === "bottomRightCorner") {
-        console.log("dragging bottom corner 1");
         this.dragBottomCorner = true;
         this.layer.parent.pause = true;
       }
@@ -241,34 +240,34 @@ export default class Grid {
     if (handles) {
       this.rightBorder.interactive = true;
       this.bottomBorder.interactive = true;
-      const rightHandle = rectangle({ x: 1, y: 1 }, { x: 4, y: 10 }, thickness);
+      const rightHandle = rectangle({ x: 1, y: 1 }, { x: 9, y: 14 }, thickness);
       const bottomHandle = rectangle(
         { x: 1, y: 1 },
-        { x: 10, y: 4 },
+        { x: 14, y: 9 },
         thickness
       );
       const bottomCornerHandle = rectangle(
         { x: 0, y: 0 },
-        { x: 9, y: 9 },
+        { x: 14, y: 14 },
         thickness
       );
 
       rightHandle.interactive = true;
       rightHandle.type = "rightBorder";
-      rightHandle.x = width * cellsize - 3;
-      rightHandle.y = (height * cellsize) / 2 - 6;
+      rightHandle.x = width * cellsize - 5;
+      rightHandle.y = (height * cellsize) / 2 - 8;
       this.rightHandle = rightHandle;
 
       bottomHandle.interactive = true;
       bottomHandle.type = "bottomBorder";
-      bottomHandle.x = (width * cellsize) / 2 - 6;
-      bottomHandle.y = height * cellsize - 3;
+      bottomHandle.x = (width * cellsize) / 2 - 8;
+      bottomHandle.y = height * cellsize - 5;
       this.bottomHandle = bottomHandle;
 
       bottomCornerHandle.interactive = true;
       bottomCornerHandle.type = "bottomRightCorner";
-      bottomCornerHandle.x = width * cellsize - 5;
-      bottomCornerHandle.y = height * cellsize - 5;
+      bottomCornerHandle.x = width * cellsize - 7;
+      bottomCornerHandle.y = height * cellsize - 7;
       this.bottomCornerHandle = bottomCornerHandle;
 
       this.borders.addChild(rightHandle);
