@@ -20,7 +20,6 @@ export default () => {
   const [boards, setBoards] = useState([]);
   useEffect(async () => {
     const bs = await idb.getAllByIndex("maps", "boardId");
-    // console.log(bs);
     setBoards(bs.map((b) => b.boardId));
   }, []);
   return html`
