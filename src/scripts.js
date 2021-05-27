@@ -4,7 +4,7 @@ import TableTop from "./table-top.js";
 import App from "./ui-components/app.js";
 import New from "./ui-components/new.js";
 import State from "./state/state.js";
-import ServiceWorkerManager from "./service-worker-manager.js";
+// import ServiceWorkerManager from "./service-worker-manager.js";
 
 const html = htm.bind(h);
 
@@ -19,7 +19,7 @@ const main = async () => {
   const state = new State(id);
   const tabletop = new TableTop({ state });
 
-  ServiceWorkerManager.registerServiceWorker();
+  // ServiceWorkerManager.registerServiceWorker();
 
   render(
     html`<${App}
