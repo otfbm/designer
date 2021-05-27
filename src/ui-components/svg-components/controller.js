@@ -3,13 +3,13 @@ import htm from "htm";
 
 const html = htm.bind(h);
 
-export default () => {
+export default ({ selected }) => {
   return html`<svg
     width="24"
     height="24"
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
-    class="fill-current text-white"
+    class="fill-current ${selected ? "text-blue-300" : "text-white"}"
   >
     <path
       d="M14.8284 6.34313L16.2426 4.92892L12 0.686279L7.75735 4.92892L9.17156 6.34313L12 3.51471L14.8284 6.34313Z"

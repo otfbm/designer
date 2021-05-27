@@ -15,23 +15,30 @@ class UtilityBar extends Component {
     this.state = {
       editingBackgroundPosition: false,
       editingGridDrag: false,
+      selected: "",
     };
   }
 
   toggleBackgroundPositionEditing() {
     const newState = !this.state.editingBackgroundPosition;
     this.setState({
+      editingGridDrag: false,
       editingBackgroundPosition: newState,
+      selected: newState ? "bg-position-drag" : "",
     });
     this.props.offsetEditingToggled(newState);
+    this.props.gridEditingToggled(false);
   }
 
   toggleGridDragEditing() {
     const newState = !this.state.editingGridDrag;
     this.setState({
       editingGridDrag: newState,
+      editingBackgroundPosition: false,
+      selected: newState ? "grid-drag" : "",
     });
     this.props.gridEditingToggled(newState);
+    this.props.offsetEditingToggled(false);
   }
 
   render({
@@ -54,7 +61,7 @@ class UtilityBar extends Component {
             openBackgrounds();
           }}"
         >
-          <${SVGImage} />
+          <${SVGImage} selected=${this.state.selected === "bg-select"} />
         </button>
       </div>
       <div class="flex-shrink-0">
@@ -65,7 +72,7 @@ class UtilityBar extends Component {
             gainFocus();
           }}"
         >
-          <${SVGDragout} />
+          <${SVGDragout} selected=${this.state.selected === "grid-drag"} />
         </button>
       </div>
       <div class="flex-shrink-0">
@@ -76,7 +83,9 @@ class UtilityBar extends Component {
             gainFocus();
           }}"
         >
-          <${SVGController} />
+          <${SVGController}
+            selected=${this.state.selected === "bg-position-drag"}
+          />
         </button>
       </div>
       <!-- <div class="flex-shrink-0">
@@ -87,7 +96,7 @@ class UtilityBar extends Component {
         gainFocus();
       }}"
         >
-          <${SVGUndo} />
+          <${SVGUndo} selected=${this.state.selected === "undo"} />
         </button>
       </div> -->
       <div class="flex-shrink-0">
@@ -98,7 +107,7 @@ class UtilityBar extends Component {
             openOTFBMInfo();
           }}"
         >
-          <${SVGDownload} />
+          <${SVGDownload} selected=${this.state.selected === "download"} />
         </button>
       </div>
       <div class="flex-shrink-0">
@@ -109,7 +118,7 @@ class UtilityBar extends Component {
             openSettings();
           }}"
         >
-          <${SVGOptions} />
+          <${SVGOptions} selected=${this.state.selected === "settings"} />
         </button>
       </div>
     </div>`;
