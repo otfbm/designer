@@ -3,7 +3,15 @@ module.exports = {
   purge: ["./public/**/*.html", "./src/**/*.js"],
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: "#62c1bf",
+      },
+      backgroundImage: (theme) => ({
+        grid: "url('/background-grid.svg')",
+        logo: "url('/logo.svg')",
+      }),
+    },
   },
   variants: {},
   plugins: [],
