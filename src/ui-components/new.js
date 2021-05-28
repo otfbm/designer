@@ -41,9 +41,7 @@ export default () => {
           </div>
         </div>
       </div>
-      <div class="text-white text-center h-1/6 grid content-center">
-        Alpha Version
-      </div>
+      <div class="text-white text-center h-1/6 grid content-center">Alpha</div>
     </div>
   `;
 };
