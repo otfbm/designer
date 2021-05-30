@@ -26,7 +26,12 @@ function buildURL(settings, background) {
 
   const url = new URL(segments.join("/"), "https://otfbm.io");
 
-  if (background.src) url.search = `?bg=${background.src}`;
+  if (background.src) {
+    url.search = `?bg=${background.src.replace(
+      "https://yq75gtsouh.execute-api.us-west-2.amazonaws.com/prod/?url=",
+      ""
+    )}`;
+  }
 
   return url.href;
 }
@@ -52,7 +57,12 @@ function buildJSON(settings, background) {
 
   if (width && height) config.view = `${width}x${height}`;
 
-  if (background.src) config.background = background.src;
+  if (background.src) {
+    config.background = background.src.replace(
+      "https://yq75gtsouh.execute-api.us-west-2.amazonaws.com/prod/?url=",
+      ""
+    );
+  }
 
   return JSON.stringify(config, null, 2);
 }
@@ -79,7 +89,12 @@ function buildAlias(settings, background) {
 
   if (width && height) cmd += ` -mapsize ${width}x${height}`;
 
-  if (background.src) cmd += ` -bg ${background.src}`;
+  if (background.src) {
+    cmd += ` -bg ${background.src.replace(
+      "https://yq75gtsouh.execute-api.us-west-2.amazonaws.com/prod/?url=",
+      ""
+    )}`;
+  }
 
   return cmd;
 }

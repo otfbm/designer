@@ -124,7 +124,8 @@ export default class State {
   }
 
   async addBackground(background) {
-    background.src = `https://bg.otfbm.io/${btoa(background.src)}`;
+    // background.src = `https://bg.otfbm.io/${btoa(background.src)}`;
+    background.src = `https://yq75gtsouh.execute-api.us-west-2.amazonaws.com/prod/?url=${background.src}`;
     background.custom = true;
     this[_backgrounds].push(background);
     await this.assets.add("maps", background);
