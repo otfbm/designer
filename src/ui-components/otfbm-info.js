@@ -5,13 +5,20 @@ import ModalHeader from "./modal-header.js";
 const html = htm.bind(h);
 
 function buildURL(settings, background) {
-  const { width, height, cellsize, backgroundOffsetX, backgroundOffsetY } =
-    settings;
+  const {
+    width,
+    height,
+    cellsize,
+    backgroundOffsetX,
+    backgroundOffsetY,
+    gridColor,
+  } = settings;
   const segments = [];
   if (width && height) segments.push(`${width}x${height}`);
 
   const options = [];
   if (cellsize) options.push(`c${cellsize}`);
+  if (gridColor) options.push(`g~${gridColor}`);
   if (
     backgroundOffsetX &&
     backgroundOffsetX !== 0 &&
@@ -37,12 +44,19 @@ function buildURL(settings, background) {
 }
 
 function buildJSON(settings, background) {
-  const { width, height, cellsize, backgroundOffsetX, backgroundOffsetY } =
-    settings;
+  const {
+    width,
+    height,
+    cellsize,
+    backgroundOffsetX,
+    backgroundOffsetY,
+    gridColor,
+  } = settings;
   const config = {};
 
   const options = [];
   if (cellsize) options.push(`c${cellsize}`);
+  if (gridColor) options.push(`g~${gridColor}`);
   if (
     backgroundOffsetX &&
     backgroundOffsetX !== 0 &&
@@ -68,12 +82,19 @@ function buildJSON(settings, background) {
 }
 
 function buildAlias(settings, background) {
-  const { width, height, cellsize, backgroundOffsetX, backgroundOffsetY } =
-    settings;
+  const {
+    width,
+    height,
+    cellsize,
+    backgroundOffsetX,
+    backgroundOffsetY,
+    gridColor,
+  } = settings;
   let cmd = "!map";
 
   const options = [];
   if (cellsize) options.push(`c${cellsize}`);
+  if (gridColor) options.push(`g~${gridColor}`);
   if (
     backgroundOffsetX &&
     backgroundOffsetX !== 0 &&
