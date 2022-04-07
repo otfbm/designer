@@ -3,7 +3,9 @@ import htm from "htm";
 import TableTop from "./table-top.js";
 import App from "./ui-components/app.js";
 import New from "./ui-components/new.js";
+import Login from "./ui-components/login.js";
 import State from "./state/state.js";
+import { checkCookie, verifyLogin, setCookie } from "./utils";
 // import ServiceWorkerManager from "./service-worker-manager.js";
 
 const html = htm.bind(h);
@@ -11,6 +13,20 @@ const html = htm.bind(h);
 const main = async () => {
   const url = new URL(window.location.href);
   const id = url.searchParams.get("id");
+  const code = url.searchParams.get("code");
+
+  if (code) {
+    const { access, user } = await verifyLogin(code);
+    if (access) {
+      setCookie("user", user, 30);
+    }
+  }
+
+  if (!checkCookie()) {
+    render(html`<${Login} />`, document.getElementById("app"));
+    return;
+  }
+
   if (!id || !/^[a-z0-9]{6}$/.test(id)) {
     render(html`<${New} />`, document.getElementById("app"));
     return;
