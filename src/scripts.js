@@ -19,6 +19,9 @@ const main = async () => {
     const { access, user } = await verifyLogin(code);
     if (access) {
       setCookie("user", user, 30);
+      url.searchParams.delete("code");
+      url.searchParams.delete("state");
+      window.location.href = url.href;
     }
   }
 
